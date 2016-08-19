@@ -1,0 +1,122 @@
+﻿@model PagedList.IPagedList<eCheck3.Models.tbCompany_Company>
+@using PagedList.Mvc;
+
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Company";
+}
+
+
+@using (Html.BeginForm("Company", "Admin", FormMethod.Get, new {id="dataForm"}))
+{
+    <h2>Companies</h2>
+
+var user = System.Web.HttpContext.Current.User;
+
+    <div class="row">
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
+            @if (user.IsInRole("canEditAllCompanies"))
+            {
+            <img src="~/Images/Buttons/add.png" onclick="window.location.href='CompanyCreate'" alt="Create New" title="Create New Company" />
+            }
+
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-10" style="vertical-align:top;">
+            @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "input input-sm", @placeholder = "Search for..." })
+            <button class="btn btn-primary btn-xs" type="submit" title="Search"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</button>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-3 col-xs-6">
+            @Html.PagedListPager(Model, page => Url.Action("Company",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+    new PagedListRenderOptions { ContainerDivClasses = new[] { "pagination-container pagination-sm" }, UlElementClasses = new[] { "pagination pagination-sm pagination-right" }, Display = PagedListDisplayMode.IfNeeded, MaximumPageNumbersToDisplay = 4 })
+            &nbsp;&nbsp;
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+            @Html.DropDownList("PageSizeList", ViewBag.PageSizeList as SelectList, new { @class = "input-sm" })
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12">
+            <button class="btn btn-xs btn-primary" onclick="return false;">
+                Count&nbsp;
+                <span class="badge">
+                    @Model.TotalItemCount
+                </span>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+            <table id="MainDataTable" class="table table-responsive table-hover table-striped" style="overflow:auto;">
+                <tr>
+                    <th>
+                        @Html.ActionLink(@Html.DisplayNameFor(model => model.FirstOrDefault().CompanyName).ToHtmlString(), "Company", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter, pageSizeList = ViewBag.PageSizeListvalue })
+                    </th>
+                    @*<th>
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().AllowLive)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().AllowTraining)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().DefaultLive)
+                    </th>*@
+                    <th>
+                        @Html.ActionLink(@Html.DisplayNameFor(model => model.FirstOrDefault().IsActive).ToHtmlString(), "Company", new { sortOrder = ViewBag.ActiveSortParm, currentFilter = ViewBag.CurrentFilter, pageSizeList = ViewBag.PageSizeListvalue })
+                    </th>
+                    @*<th>
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().tbSysReference_PwdComplexity.PwdComplexityName)
+                    </th>*@
+                    <th></th>
+                </tr>
+
+                @foreach (var item in Model)
+    {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CompanyName)
+                        </td>
+                        @*<td>
+                            @Html.DisplayFor(modelItem => item.AllowLive)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AllowTraining)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DefaultLive)
+                        </td>*@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsActive)
+                        </td>
+                        @*<td>
+                            @Html.DisplayFor(modelItem => item.tbSysReference_PwdComplexity.PwdComplexityName)
+                        </td>*@
+                        <td>
+                            @if (user.IsInRole("canViewAllCompanies"))
+                {
+                                <img src="~/Images/Buttons/editprop-sm.png" onclick="window.location.href='CompanyDetails/@Html.DisplayFor(modelItem => item.ID)'" alt="Details" title="View Company Details" />
+                }
+                            @if (user.IsInRole("canEditAllCompanies"))
+                {
+                                <img src="~/Images/Buttons/edit-sm.png" onclick="window.location.href='CompanyEdit/@Html.DisplayFor(modelItem => item.ID)'" alt="Edit" title="Edit Company Details" />
+                                <img src="~/Images/Buttons/delete-sm.png" onclick="window.location.href='CompanyDelete/@Html.DisplayFor(modelItem => item.ID)'" alt="Delete" title="Delete Company" />
+                }
+                        </td>
+                    </tr>
+    }
+
+            </table>
+        </div>
+    <input type="hidden" id="hfSortOrder" name="hfSortOrder" value="@ViewBag.CurrentSort" />
+}
+
+
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function () {
+        $('#MainDataTable').colResizable({resizeMode:"flex"});
+        $('#PageSizeList').on("change", function () {
+            $('#dataForm').submit();
+        });
+    });
+
+</script>

@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="EMSDataLocalModel1.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="tbAccess_Group">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GroupName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="GroupDescription" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="CompanyID" Type="int" Nullable="false" />
+          <Property Name="DisplayOrder" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbAccess_GroupMembership">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GroupID" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbAccess_GroupRole">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GroupID" Type="int" Nullable="false" />
+          <Property Name="RoleID" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_tbAccess_GroupMembership_tbAccess_Group">
+          <End Role="tbAccess_Group" Type="Self.tbAccess_Group" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tbAccess_GroupMembership" Type="Self.tbAccess_GroupMembership" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbAccess_Group">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbAccess_GroupMembership">
+              <PropertyRef Name="GroupID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbAccess_GroupRole_tbAccess_Group">
+          <End Role="tbAccess_Group" Type="Self.tbAccess_Group" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tbAccess_GroupRole" Type="Self.tbAccess_GroupRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbAccess_Group">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbAccess_GroupRole">
+              <PropertyRef Name="GroupID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="spAccess_Group_ListGroupsByCompanyID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CompanyID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spAccess_GroupRole_CopyRolesFromUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="GroupID" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="nvarchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="EMSDataLocalModel1StoreContainer">
+          <EntitySet Name="tbAccess_Group" EntityType="Self.tbAccess_Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbAccess_GroupMembership" EntityType="Self.tbAccess_GroupMembership" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbAccess_GroupRole" EntityType="Self.tbAccess_GroupRole" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tbAccess_GroupMembership_tbAccess_Group" Association="Self.FK_tbAccess_GroupMembership_tbAccess_Group">
+            <End Role="tbAccess_Group" EntitySet="tbAccess_Group" />
+            <End Role="tbAccess_GroupMembership" EntitySet="tbAccess_GroupMembership" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbAccess_GroupRole_tbAccess_Group" Association="Self.FK_tbAccess_GroupRole_tbAccess_Group">
+            <End Role="tbAccess_Group" EntitySet="tbAccess_Group" />
+            <End Role="tbAccess_GroupRole" EntitySet="tbAccess_GroupRole" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EMSDataLocalModel1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tbAccess_Group">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GroupName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="GroupDescription" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CompanyID" Type="Int32" Nullable="false" />
+          <Property Name="DisplayOrder" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="tbAccess_GroupMembership" Relationship="Self.FK_tbAccess_GroupMembership_tbAccess_Group" FromRole="tbAccess_Group" ToRole="tbAccess_GroupMembership" />
+          <NavigationProperty Name="tbAccess_GroupRole" Relationship="Self.FK_tbAccess_GroupRole_tbAccess_Group" FromRole="tbAccess_Group" ToRole="tbAccess_GroupRole" />
+        </EntityType>
+        <EntityType Name="tbAccess_GroupMembership">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GroupID" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="tbAccess_Group" Relationship="Self.FK_tbAccess_GroupMembership_tbAccess_Group" FromRole="tbAccess_GroupMembership" ToRole="tbAccess_Group" />
+        </EntityType>
+        <EntityType Name="tbAccess_GroupRole">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GroupID" Type="Int32" Nullable="false" />
+          <Property Name="RoleID" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="tbAccess_Group" Relationship="Self.FK_tbAccess_GroupRole_tbAccess_Group" FromRole="tbAccess_GroupRole" ToRole="tbAccess_Group" />
+        </EntityType>
+        <Association Name="FK_tbAccess_GroupMembership_tbAccess_Group">
+          <End Role="tbAccess_Group" Type="Self.tbAccess_Group" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tbAccess_GroupMembership" Type="Self.tbAccess_GroupMembership" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbAccess_Group">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbAccess_GroupMembership">
+              <PropertyRef Name="GroupID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbAccess_GroupRole_tbAccess_Group">
+          <End Role="tbAccess_Group" Type="Self.tbAccess_Group" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tbAccess_GroupRole" Type="Self.tbAccess_GroupRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbAccess_Group">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbAccess_GroupRole">
+              <PropertyRef Name="GroupID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tbAccess_Group" EntityType="Self.tbAccess_Group" />
+          <EntitySet Name="tbAccess_GroupMembership" EntityType="Self.tbAccess_GroupMembership" />
+          <EntitySet Name="tbAccess_GroupRole" EntityType="Self.tbAccess_GroupRole" />
+          <AssociationSet Name="FK_tbAccess_GroupMembership_tbAccess_Group" Association="Self.FK_tbAccess_GroupMembership_tbAccess_Group">
+            <End Role="tbAccess_Group" EntitySet="tbAccess_Group" />
+            <End Role="tbAccess_GroupMembership" EntitySet="tbAccess_GroupMembership" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbAccess_GroupRole_tbAccess_Group" Association="Self.FK_tbAccess_GroupRole_tbAccess_Group">
+            <End Role="tbAccess_Group" EntitySet="tbAccess_Group" />
+            <End Role="tbAccess_GroupRole" EntitySet="tbAccess_GroupRole" />
+          </AssociationSet>
+          <FunctionImport Name="spAccess_Group_ListGroupsByCompanyID" ReturnType="Collection(EMSDataLocalModel1.spAccess_Group_ListGroupsByCompanyID_Result)">
+            <Parameter Name="CompanyID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spAccess_GroupRole_CopyRolesFromUser">
+            <Parameter Name="GroupID" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="spAccess_Group_ListGroupsByCompanyID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="GroupName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="GroupDescription" Nullable="false" MaxLength="500" />
+          <Property Type="Int32" Name="CompanyID" Nullable="false" />
+          <Property Type="Int32" Name="DisplayOrder" Nullable="false" />
+          <Property Type="Boolean" Name="IsActive" Nullable="false" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EMSDataLocalModel1StoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="tbAccess_Group">
+            <EntityTypeMapping TypeName="EMSDataLocalModel1.tbAccess_Group">
+              <MappingFragment StoreEntitySet="tbAccess_Group">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="GroupName" ColumnName="GroupName" />
+                <ScalarProperty Name="GroupDescription" ColumnName="GroupDescription" />
+                <ScalarProperty Name="CompanyID" ColumnName="CompanyID" />
+                <ScalarProperty Name="DisplayOrder" ColumnName="DisplayOrder" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbAccess_GroupMembership">
+            <EntityTypeMapping TypeName="EMSDataLocalModel1.tbAccess_GroupMembership">
+              <MappingFragment StoreEntitySet="tbAccess_GroupMembership">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="GroupID" ColumnName="GroupID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbAccess_GroupRole">
+            <EntityTypeMapping TypeName="EMSDataLocalModel1.tbAccess_GroupRole">
+              <MappingFragment StoreEntitySet="tbAccess_GroupRole">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="GroupID" ColumnName="GroupID" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="spAccess_Group_ListGroupsByCompanyID" FunctionName="EMSDataLocalModel1.Store.spAccess_Group_ListGroupsByCompanyID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="EMSDataLocalModel1.spAccess_Group_ListGroupsByCompanyID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="GroupName" ColumnName="GroupName" />
+                <ScalarProperty Name="GroupDescription" ColumnName="GroupDescription" />
+                <ScalarProperty Name="CompanyID" ColumnName="CompanyID" />
+                <ScalarProperty Name="DisplayOrder" ColumnName="DisplayOrder" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="spAccess_GroupRole_CopyRolesFromUser" FunctionName="EMSDataLocalModel1.Store.spAccess_GroupRole_CopyRolesFromUser" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

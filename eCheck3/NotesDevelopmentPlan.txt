@@ -1,0 +1,64 @@
+﻿
+
+Next Steps - 
+		
+		
+		
+	Company
+
+		CompanyDetails - Show default group name
+
+		CompanyEdit 
+			*** Include self-registration email addresses add/delete in company-edit ? companyDetails
+
+		- Add company module editor (display in general, edit in CCSI mode.  ? module pricing?)
+		
+	Group
+		- Apply skin to group
+		- build edit of group roles
+		- Build edit of group members	
+
+
+	Overall
+		 - add version 3 page, detail upgrades from version 2
+
+
+
+* flesh out company CRUD, note how to add extra tables, enhance model.
+
+
+* add group tables, CRUD manager, group roles
+
+* add user CRUD, users to groups, and group-user-role update
+* include view user roles by group
+
+
+*** Add version 3 improvement details to About page as build
+
+****** Training Mode Thoughts ********
+
+Only certain areas will be enabled for write/edit/delete in training mode.  check sheets, fuel entry, work order will be allowed
+reports, asset/lists/ admin will be view only
+will have tbCheckSheet_CheckSheetRecordsTRAINING tables for those areas where write is permitted, and worker will periodically clean
+those tables
+
+
+******* Publish Notes ************
+
+*   right click eCheck3 project, select publish
+
+* for DB, use EMSDataLocal, and EMSDataLive [Once this is working, delete EMSData on Local server, and EMSData_db on live]
+
+****** General User Notes *******
+
+* (ASPUsers.ID is a primary key - Use UserID rather than username as FK) - OK
+
+To build labels for CRUD functionality that withstand updates, put the labels in the MetaData.cs, and link the 
+model to the labels in PartialClasses.cs
+
+To change a model, right click the model in the diagram, and go to update model from database.
+  Add/remove tables, sprocs, views, etc from there
+
+Go to controllers, right click, add new controller, MVC Scaffolded, same name as existing. 
+ Just save any essential changes to controller or view prior to updating the scaffold
+        

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2ef834a4d1424c83ae29aeba3d8fd04f" Name="Diagram1">
+        <EntityTypeShape EntityType="EMSDataLocalModel1.tbAccess_Group" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EMSDataLocalModel1.tbAccess_GroupMembership" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="EMSDataLocalModel1.tbAccess_GroupRole" Width="1.5" PointX="3" PointY="3.625" IsExpanded="true" />
+        <AssociationConnector Association="EMSDataLocalModel1.FK_tbAccess_GroupMembership_tbAccess_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="EMSDataLocalModel1.FK_tbAccess_GroupRole_tbAccess_Group" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

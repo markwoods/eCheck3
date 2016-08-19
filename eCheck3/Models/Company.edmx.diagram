@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="fbc90a06603247c6906b727fbcc1f15d" Name="Diagram1">
+        <EntityTypeShape EntityType="EMSDataLocalModel.tbCompany_Company" Width="1.5" PointX="3" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EMSDataLocalModel.tbSysReference_PwdComplexity" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="EMSDataLocalModel.tbSysReference_PwdExpiry" Width="1.5" PointX="0.75" PointY="0.75" />
+        <AssociationConnector Association="EMSDataLocalModel.FK_tbCompany_Company_tbSysReference_PwdComplexity" />
+        <AssociationConnector Association="EMSDataLocalModel.FK_tbCompany_Company_tbSysReference_PwdExpiry" />
+        <EntityTypeShape EntityType="EMSDataLocalModel.tbCompany_CompanyModule" Width="1.5" PointX="5.25" PointY="3.5" />
+        <EntityTypeShape EntityType="EMSDataLocalModel.tbSysReference_Module" Width="1.5" PointX="2.125" PointY="7" />
+        <AssociationConnector Association="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbCompany_Company" />
+        <AssociationConnector Association="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbSysReference_Module" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

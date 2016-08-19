@@ -1,0 +1,43 @@
+﻿/**/
+/* 'Master-page' css modifications for Site and Bootstrap */
+/**/
+
+h2 {
+    color:#143D8D;
+}
+
+
+hr {
+    color:#446e9b;
+    background-color:#446e9b;
+    height:1px;
+}
+
+.hr-heavy {
+    height:4px;
+}
+
+.navbar-brand {
+    font-family:'gill sans', 'Gill Sans MT' , calibri, 'Trebuchet MS' , sans-serif;
+}
+
+.brandEMS{
+    color:#143D8D; 
+    font-weight:900;
+    font-size:28px;
+}
+
+.branddata{
+    font-weight:600;
+    font-size:24px;
+    color:#797979;
+}
+
+.navbar-brand:hover{
+    cursor:pointer;
+}
+
+.help-icon:hover{
+    cursor:help;
+
+}

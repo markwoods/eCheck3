@@ -1,0 +1,178 @@
+﻿@model eCheck3.Models.tbCompany_Company
+
+@{
+    ViewBag.Title = "Edit Company";
+    var user = System.Web.HttpContext.Current.User;
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>@Html.DisplayFor(model => model.CompanyName)</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="form-inline">
+        <div class="form-group row">
+            @Html.LabelFor(model => model.AllowTraining, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-1">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.AllowTraining)
+                    @Html.ValidationMessageFor(model => model.AllowTraining, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @Html.LabelFor(model => model.AllowLive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-1">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.AllowLive)
+                    @Html.ValidationMessageFor(model => model.AllowLive, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @Html.LabelFor(model => model.DefaultLive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.DefaultLive)
+                    <span class="glyphicon glyphicon-question-sign help-icon" title="Companies must be permitted in live mode, or training mode, or both.  Default mode sets which mode will apply to new users for this company.  This will set which mode they log on to, users can change this setting individually."></span>
+                    @Html.ValidationMessageFor(model => model.DefaultLive, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.MinPwdLength, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-1">
+                @Html.EditorFor(model => model.MinPwdLength, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MinPwdLength, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PwdComplexityID, "Password Complexity", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownList("PwdComplexityID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PwdComplexityID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.PwdExpiryID, "Password Expiry", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownList("PwdExpiryID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PwdExpiryID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-horizontal">
+        <div class="form-group row">
+            @Html.LabelFor(model => model.AllowSelfRegistration, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-1">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.AllowSelfRegistration)
+                    <span class="glyphicon glyphicon-question-sign help-icon" title="Allowing self registration will permit individuals to create their own accounts assuming they have a valid email in the domain(s) permitted for this company.  Self-registered users will be automatically assigned to the default group defined below."></span>
+                    @Html.ValidationMessageFor(model => model.AllowSelfRegistration, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.DefaultGroupID, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-3">
+                @Html.DropDownListFor(model => model.DefaultGroupID, ViewBag.VBDefaultGroupID as IEnumerable<SelectListItem>, htmlAttributes: new { @class = "form-control" }) 
+                @Html.ValidationMessageFor(model => model.DefaultGroupID, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-1">
+                <span class="glyphicon glyphicon-question-sign help-icon" title="Self-registered users will be automatically assigned to this default group, and be granted any priviledges this group has."></span>
+            </div>
+        </div>
+
+        @if (user.IsInRole("canEditAllCompanies"))
+        {
+            <div class="form-group row">
+                @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-1">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.IsActive)
+                        <span class="glyphicon glyphicon-question-sign help-icon" title="Removing active status will prevent any users from this company from logging on, will block self-registration, but will preserve all company data."></span>
+                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            <div class="col-md-offset-4 col-md-8">
+                <input type="submit" value="Save" class="btn btn-primary btn-sm" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @{
+        if (user.IsInRole("canViewAllCompanies") || user.IsInRole("canEditAllCompanies"))
+        {
+            @Html.ActionLink("Back to List", "Company")
+        }
+        if (user.IsInRole("canEditAllCompanies"))
+        {
+            @Html.Raw(" | ")
+        }
+        if (user.IsInRole("canViewMyCompany") || user.IsInRole("canViewAllCompanies"))
+        {
+            @Html.ActionLink("Details", "CompanyDetails", new { id = Model.ID })
+        }
+
+}
+</div>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#AllowLive').on("change", function () {
+            // If allowlive is unchecked, then allow training must be checked,
+            // and default live must not be checked
+            if ($(this).is(":checked") == false) {
+                $('#AllowTraining').prop("checked", true);
+                $('#DefaultLive').prop("checked", false);
+                $('#DefaultLive').prop("disabled",true);
+            }
+            else {
+                if($("#AllowTraining").is(":checked")==true){
+                    // both checked, enable live vs training default selector
+                    $('#DefaultLive').prop("disabled", false);
+                }
+            }
+        });
+
+        $('#AllowTraining').on("change", function () {
+            if ($(this).is(":checked") == false) {
+                $('#AllowLive').prop("checked", true);
+                $('#DefaultLive').prop("checked", true);
+                $('#DefaultLive').prop("disabled", true);
+            }
+            else
+            {
+                if($("#AllowLive").is(":checked")==true){
+                    // both checked, enable live vs training default selector
+                    $('#DefaultLive').prop("disabled", false);
+                }
+            }
+        });
+    });
+</script>

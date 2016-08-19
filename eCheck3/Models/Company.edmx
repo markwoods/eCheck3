@@ -1,0 +1,385 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="EMSDataLocalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="tbCompany_Company">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CompanyName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AllowSelfRegistration" Type="bit" Nullable="false" />
+          <Property Name="DefaultGroupID" Type="int" />
+          <Property Name="AllowTraining" Type="bit" Nullable="false" />
+          <Property Name="AllowLive" Type="bit" Nullable="false" />
+          <Property Name="DefaultLive" Type="bit" Nullable="false" />
+          <Property Name="MinPwdLength" Type="int" Nullable="false" />
+          <Property Name="PwdComplexityID" Type="int" Nullable="false" />
+          <Property Name="PwdExpiryID" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbCompany_CompanyModule">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CompanyID" Type="int" Nullable="false" />
+          <Property Name="ModuleID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbSysReference_Module">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ModuleName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ModuleDescription" Type="varchar" MaxLength="500" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbSysReference_PwdComplexity">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="PwdComplexityName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbSysReference_PwdExpiry">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="PwdExpiryName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_tbCompany_Company_tbSysReference_PwdComplexity">
+          <End Role="tbSysReference_PwdComplexity" Type="Self.tbSysReference_PwdComplexity" Multiplicity="1" />
+          <End Role="tbCompany_Company" Type="Self.tbCompany_Company" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbSysReference_PwdComplexity">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbCompany_Company">
+              <PropertyRef Name="PwdComplexityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbCompany_Company_tbSysReference_PwdExpiry">
+          <End Role="tbSysReference_PwdExpiry" Type="Self.tbSysReference_PwdExpiry" Multiplicity="1" />
+          <End Role="tbCompany_Company" Type="Self.tbCompany_Company" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbSysReference_PwdExpiry">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbCompany_Company">
+              <PropertyRef Name="PwdExpiryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbCompany_CompanyModule_tbCompany_Company">
+          <End Role="tbCompany_Company" Type="Self.tbCompany_Company" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tbCompany_CompanyModule" Type="Self.tbCompany_CompanyModule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbCompany_Company">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbCompany_CompanyModule">
+              <PropertyRef Name="CompanyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbCompany_CompanyModule_tbSysReference_Module">
+          <End Role="tbSysReference_Module" Type="Self.tbSysReference_Module" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tbCompany_CompanyModule" Type="Self.tbCompany_CompanyModule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbSysReference_Module">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbCompany_CompanyModule">
+              <PropertyRef Name="ModuleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="spCompany_InsertCompanyReturnID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CompanyName" Type="nvarchar" Mode="In" />
+          <Parameter Name="AllowSelfRegistration" Type="bit" Mode="In" />
+          <Parameter Name="AllowTraining" Type="bit" Mode="In" />
+          <Parameter Name="AllowLive" Type="bit" Mode="In" />
+          <Parameter Name="DefaultLive" Type="bit" Mode="In" />
+          <Parameter Name="MinPwdLength" Type="int" Mode="In" />
+          <Parameter Name="PwdComplexityID" Type="int" Mode="In" />
+          <Parameter Name="PwdExpiryID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spCompany_ListCompanyModuleAccess" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CompanyID" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="EMSDataLocalModelStoreContainer">
+          <EntitySet Name="tbCompany_Company" EntityType="Self.tbCompany_Company" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbCompany_CompanyModule" EntityType="Self.tbCompany_CompanyModule" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbSysReference_Module" EntityType="Self.tbSysReference_Module" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbSysReference_PwdComplexity" EntityType="Self.tbSysReference_PwdComplexity" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbSysReference_PwdExpiry" EntityType="Self.tbSysReference_PwdExpiry" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tbCompany_Company_tbSysReference_PwdComplexity" Association="Self.FK_tbCompany_Company_tbSysReference_PwdComplexity">
+            <End Role="tbSysReference_PwdComplexity" EntitySet="tbSysReference_PwdComplexity" />
+            <End Role="tbCompany_Company" EntitySet="tbCompany_Company" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbCompany_Company_tbSysReference_PwdExpiry" Association="Self.FK_tbCompany_Company_tbSysReference_PwdExpiry">
+            <End Role="tbSysReference_PwdExpiry" EntitySet="tbSysReference_PwdExpiry" />
+            <End Role="tbCompany_Company" EntitySet="tbCompany_Company" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbCompany_CompanyModule_tbCompany_Company" Association="Self.FK_tbCompany_CompanyModule_tbCompany_Company">
+            <End Role="tbCompany_Company" EntitySet="tbCompany_Company" />
+            <End Role="tbCompany_CompanyModule" EntitySet="tbCompany_CompanyModule" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbCompany_CompanyModule_tbSysReference_Module" Association="Self.FK_tbCompany_CompanyModule_tbSysReference_Module">
+            <End Role="tbSysReference_Module" EntitySet="tbSysReference_Module" />
+            <End Role="tbCompany_CompanyModule" EntitySet="tbCompany_CompanyModule" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EMSDataLocalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tbCompany_Company">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CompanyName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AllowSelfRegistration" Type="Boolean" Nullable="false" />
+          <Property Name="DefaultGroupID" Type="Int32" />
+          <Property Name="AllowTraining" Type="Boolean" Nullable="false" />
+          <Property Name="AllowLive" Type="Boolean" Nullable="false" />
+          <Property Name="DefaultLive" Type="Boolean" Nullable="false" />
+          <Property Name="MinPwdLength" Type="Int32" Nullable="false" />
+          <Property Name="PwdComplexityID" Type="Int32" Nullable="false" />
+          <Property Name="PwdExpiryID" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="tbSysReference_PwdComplexity" Relationship="EMSDataLocalModel.FK_tbCompany_Company_tbSysReference_PwdComplexity" FromRole="tbCompany_Company" ToRole="tbSysReference_PwdComplexity" />
+          <NavigationProperty Name="tbSysReference_PwdExpiry" Relationship="EMSDataLocalModel.FK_tbCompany_Company_tbSysReference_PwdExpiry" FromRole="tbCompany_Company" ToRole="tbSysReference_PwdExpiry" />
+          <NavigationProperty Name="tbCompany_CompanyModule" Relationship="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbCompany_Company" FromRole="tbCompany_Company" ToRole="tbCompany_CompanyModule" />
+        </EntityType>
+        <EntityContainer Name="EMSDataCompanyEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tbCompany_Company" EntityType="Self.tbCompany_Company" />
+          <EntitySet Name="tbSysReference_PwdComplexity" EntityType="EMSDataLocalModel.tbSysReference_PwdComplexity" />
+          <EntitySet Name="tbSysReference_PwdExpiry" EntityType="EMSDataLocalModel.tbSysReference_PwdExpiry" />
+          <AssociationSet Name="FK_tbCompany_Company_tbSysReference_PwdComplexity" Association="EMSDataLocalModel.FK_tbCompany_Company_tbSysReference_PwdComplexity">
+            <End Role="tbSysReference_PwdComplexity" EntitySet="tbSysReference_PwdComplexity" />
+            <End Role="tbCompany_Company" EntitySet="tbCompany_Company" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbCompany_Company_tbSysReference_PwdExpiry" Association="EMSDataLocalModel.FK_tbCompany_Company_tbSysReference_PwdExpiry">
+            <End Role="tbSysReference_PwdExpiry" EntitySet="tbSysReference_PwdExpiry" />
+            <End Role="tbCompany_Company" EntitySet="tbCompany_Company" />
+          </AssociationSet>
+          <FunctionImport Name="spCompany_InsertCompanyReturnID" ReturnType="Collection(Decimal)">
+            <Parameter Name="CompanyName" Mode="In" Type="String" />
+            <Parameter Name="AllowSelfRegistration" Mode="In" Type="Boolean" />
+            <Parameter Name="AllowTraining" Mode="In" Type="Boolean" />
+            <Parameter Name="AllowLive" Mode="In" Type="Boolean" />
+            <Parameter Name="DefaultLive" Mode="In" Type="Boolean" />
+            <Parameter Name="MinPwdLength" Mode="In" Type="Int32" />
+            <Parameter Name="PwdComplexityID" Mode="In" Type="Int32" />
+            <Parameter Name="PwdExpiryID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spCompany_ListCompanyModuleAccess" ReturnType="Collection(EMSDataLocalModel.spCompany_ListCompanyModuleAccess_Result)">
+          <Parameter Name="CompanyID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="tbCompany_CompanyModule" EntityType="EMSDataLocalModel.tbCompany_CompanyModule" />
+          <EntitySet Name="tbSysReference_Module" EntityType="EMSDataLocalModel.tbSysReference_Module" />
+          <AssociationSet Name="FK_tbCompany_CompanyModule_tbCompany_Company" Association="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbCompany_Company">
+            <End Role="tbCompany_Company" EntitySet="tbCompany_Company" />
+            <End Role="tbCompany_CompanyModule" EntitySet="tbCompany_CompanyModule" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbCompany_CompanyModule_tbSysReference_Module" Association="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbSysReference_Module">
+            <End Role="tbSysReference_Module" EntitySet="tbSysReference_Module" />
+            <End Role="tbCompany_CompanyModule" EntitySet="tbCompany_CompanyModule" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="tbSysReference_PwdComplexity">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="PwdComplexityName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tbCompany_Company" Relationship="EMSDataLocalModel.FK_tbCompany_Company_tbSysReference_PwdComplexity" FromRole="tbSysReference_PwdComplexity" ToRole="tbCompany_Company" />
+        </EntityType>
+        <EntityType Name="tbSysReference_PwdExpiry">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="PwdExpiryName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tbCompany_Company" Relationship="EMSDataLocalModel.FK_tbCompany_Company_tbSysReference_PwdExpiry" FromRole="tbSysReference_PwdExpiry" ToRole="tbCompany_Company" />
+        </EntityType>
+        <Association Name="FK_tbCompany_Company_tbSysReference_PwdComplexity">
+          <End Type="EMSDataLocalModel.tbSysReference_PwdComplexity" Role="tbSysReference_PwdComplexity" Multiplicity="1" />
+          <End Type="EMSDataLocalModel.tbCompany_Company" Role="tbCompany_Company" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbSysReference_PwdComplexity">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbCompany_Company">
+              <PropertyRef Name="PwdComplexityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbCompany_Company_tbSysReference_PwdExpiry">
+          <End Type="EMSDataLocalModel.tbSysReference_PwdExpiry" Role="tbSysReference_PwdExpiry" Multiplicity="1" />
+          <End Type="EMSDataLocalModel.tbCompany_Company" Role="tbCompany_Company" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbSysReference_PwdExpiry">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbCompany_Company">
+              <PropertyRef Name="PwdExpiryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="spCompany_ListCompanyModuleAccess_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ModuleName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="ModuleDescription" Nullable="false" MaxLength="500" />
+          <Property Type="String" Name="HasAccess" Nullable="false" MaxLength="5" />
+        </ComplexType>
+        <EntityType Name="tbCompany_CompanyModule">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CompanyID" Type="Int32" Nullable="false" />
+          <Property Name="ModuleID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="tbCompany_Company" Relationship="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbCompany_Company" FromRole="tbCompany_CompanyModule" ToRole="tbCompany_Company" />
+          <NavigationProperty Name="tbSysReference_Module" Relationship="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbSysReference_Module" FromRole="tbCompany_CompanyModule" ToRole="tbSysReference_Module" />
+        </EntityType>
+        <EntityType Name="tbSysReference_Module">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ModuleName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModuleDescription" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tbCompany_CompanyModule" Relationship="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbSysReference_Module" FromRole="tbSysReference_Module" ToRole="tbCompany_CompanyModule" />
+        </EntityType>
+        <Association Name="FK_tbCompany_CompanyModule_tbCompany_Company">
+          <End Type="EMSDataLocalModel.tbCompany_Company" Role="tbCompany_Company" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="EMSDataLocalModel.tbCompany_CompanyModule" Role="tbCompany_CompanyModule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbCompany_Company">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbCompany_CompanyModule">
+              <PropertyRef Name="CompanyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbCompany_CompanyModule_tbSysReference_Module">
+          <End Type="EMSDataLocalModel.tbSysReference_Module" Role="tbSysReference_Module" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="EMSDataLocalModel.tbCompany_CompanyModule" Role="tbCompany_CompanyModule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbSysReference_Module">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tbCompany_CompanyModule">
+              <PropertyRef Name="ModuleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EMSDataLocalModelStoreContainer" CdmEntityContainer="EMSDataCompanyEntities">
+          <EntitySetMapping Name="tbCompany_Company">
+            <EntityTypeMapping TypeName="EMSDataLocalModel.tbCompany_Company">
+              <MappingFragment StoreEntitySet="tbCompany_Company">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="AllowSelfRegistration" ColumnName="AllowSelfRegistration" />
+                <ScalarProperty Name="DefaultGroupID" ColumnName="DefaultGroupID" />
+                <ScalarProperty Name="AllowTraining" ColumnName="AllowTraining" />
+                <ScalarProperty Name="AllowLive" ColumnName="AllowLive" />
+                <ScalarProperty Name="DefaultLive" ColumnName="DefaultLive" />
+                <ScalarProperty Name="MinPwdLength" ColumnName="MinPwdLength" />
+                <ScalarProperty Name="PwdComplexityID" ColumnName="PwdComplexityID" />
+                <ScalarProperty Name="PwdExpiryID" ColumnName="PwdExpiryID" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbSysReference_PwdComplexity">
+            <EntityTypeMapping TypeName="EMSDataLocalModel.tbSysReference_PwdComplexity">
+              <MappingFragment StoreEntitySet="tbSysReference_PwdComplexity">
+                <ScalarProperty Name="PwdComplexityName" ColumnName="PwdComplexityName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbSysReference_PwdExpiry">
+            <EntityTypeMapping TypeName="EMSDataLocalModel.tbSysReference_PwdExpiry">
+              <MappingFragment StoreEntitySet="tbSysReference_PwdExpiry">
+                <ScalarProperty Name="PwdExpiryName" ColumnName="PwdExpiryName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="spCompany_InsertCompanyReturnID" FunctionName="EMSDataLocalModel.Store.spCompany_InsertCompanyReturnID" />
+          <FunctionImportMapping FunctionImportName="spCompany_ListCompanyModuleAccess" FunctionName="EMSDataLocalModel.Store.spCompany_ListCompanyModuleAccess">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="EMSDataLocalModel.spCompany_ListCompanyModuleAccess_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="ModuleDescription" ColumnName="ModuleDescription" />
+                <ScalarProperty Name="HasAccess" ColumnName="HasAccess" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="tbCompany_CompanyModule">
+            <EntityTypeMapping TypeName="EMSDataLocalModel.tbCompany_CompanyModule">
+              <MappingFragment StoreEntitySet="tbCompany_CompanyModule">
+                <ScalarProperty Name="ModuleID" ColumnName="ModuleID" />
+                <ScalarProperty Name="CompanyID" ColumnName="CompanyID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbSysReference_Module">
+            <EntityTypeMapping TypeName="EMSDataLocalModel.tbSysReference_Module">
+              <MappingFragment StoreEntitySet="tbSysReference_Module">
+                <ScalarProperty Name="ModuleDescription" ColumnName="ModuleDescription" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

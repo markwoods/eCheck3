@@ -1,0 +1,24 @@
+﻿@model eCheck3.Models.DevelopmentViewModel
+
+@{
+    ViewBag.Title = "DevelopmentHome";
+}
+
+<h2>DevelopmentHome</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <div class="col-md-offset-1 col-md-2">
+            @Html.DropDownList("Choice", new SelectList(Model.ChoiceList, "Value", "Text", Model.Choice), new { @class="form-control input-sm"})
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Logon & ReDirect" class="btn btn-primary" />
+        </div>
+    </div>
+    <br /><br />
+}
+
+

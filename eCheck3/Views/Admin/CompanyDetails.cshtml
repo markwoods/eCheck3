@@ -1,0 +1,114 @@
+﻿@model eCheck3.Models.tbCompany_Company
+
+@{
+    ViewBag.Title = "Company Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>@Html.DisplayFor(model => model.CompanyName)</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CompanyName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AllowSelfRegistration)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AllowSelfRegistration)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DefaultGroupID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DefaultGroupID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AllowTraining)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AllowTraining)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AllowLive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AllowLive)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DefaultLive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DefaultLive)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MinPwdLength)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MinPwdLength)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tbSysReference_PwdComplexity.PwdComplexityName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tbSysReference_PwdComplexity.PwdComplexityName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tbSysReference_PwdExpiry.PwdExpiryName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tbSysReference_PwdExpiry.PwdExpiryName)
+        </dd>
+
+    </dl>
+</div>
+
+<p>
+    @{
+        var user = System.Web.HttpContext.Current.User;
+        if (user.IsInRole("canViewAllCompanies") || user.IsInRole("canEditAllCompanies"))
+        {
+            @Html.ActionLink("Back to List", "Company")
+        }
+        if (user.IsInRole("canEditAllCompanies"))
+        {
+            @Html.Raw(" | ")
+        }
+        if (user.IsInRole("canEditMyCompany") || user.IsInRole("canEditAllCompanies"))
+        {
+            @Html.ActionLink("Edit", "CompanyEdit", new { id = Model.ID })
+        }
+    }
+
+</p>
+

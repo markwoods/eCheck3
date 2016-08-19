@@ -1,0 +1,37 @@
+﻿
+
+
+Role Naming, and Module Association
+
+Module [0] - General
+	Roles
+		canViewMyCompany - Company View Page
+		canEditMyCompany - Company Edit Page
+		canBetaTestFeatures - Role that will be assigned to new features for beta testing purposes.  Pages will be 
+								developed to block unless that permission exists, regardless of other roles (hopefully)
+		canViewUserList - User Page
+		canAddUsers - User Page
+		canDeleteUsers - User Page
+		canEditUsers - User Page
+		canResetPasswords - User Page
+		canViewGroupList - Group Page
+		canAddGroups - Group Page
+		canDeleteGroups - Group Page
+		canEditGroups - Group Page
+		canEditGroupMembership - Group Page
+
+Module - Fleet Basic
+
+Module - Fleet Premium
+
+Module - CheckSheet
+
+Module - Form
+
+Module - Asset
+
+Module [6] - CCSI Admin
+	Roles
+		canViewAllCompanies - CCSI - can view companies list, and view page for all companies
+		canEditAllCompanies - CCSI - can add/edit/delete companies and view all companies list
+		canDoDevelopmentTesting - CCSI - Can Access Dev Pages / Menu
