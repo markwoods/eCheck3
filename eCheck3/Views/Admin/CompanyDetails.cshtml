@@ -26,14 +26,18 @@
             @Html.DisplayFor(model => model.AllowSelfRegistration)
         </dd>
 
+@{
+    if (Model.AllowSelfRegistration == true)
+    {
         <dt>
             @Html.DisplayNameFor(model => model.DefaultGroupID)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.DefaultGroupID)
+            @ViewBag.DefaultGroupName
         </dd>
-
+    }
+}
         <dt>
             @Html.DisplayNameFor(model => model.AllowTraining)
         </dt>
@@ -93,9 +97,10 @@
     </dl>
 </div>
 
+
 <p>
     @{
-        var user = System.Web.HttpContext.Current.User;
+    var user = System.Web.HttpContext.Current.User;
         if (user.IsInRole("canViewAllCompanies") || user.IsInRole("canEditAllCompanies"))
         {
             @Html.ActionLink("Back to List", "Company")

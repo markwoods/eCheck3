@@ -10,14 +10,12 @@
 namespace eCheck3.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class spCompany_ListCompanyModuleAccess_Result
+    public partial class tbCompany_CompanyEmail
     {
         public int ID { get; set; }
-        public string ModuleName { get; set; }
-        public string ModuleDescription { get; set; }
-        public string ModulePriceQualifier { get; set; }
-        public bool HasAccess { get; set; }
-        public Nullable<decimal> ModulePrice { get; set; }
+        public int CompanyID { get; set; }
+        public string EmailSuffix { get; set; }
     }
 }

@@ -27,6 +27,13 @@ namespace eCheck3
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/admin/companycreate").Include(
+                "~/Scripts/Admin/CompanyCreate.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/admin/companyedit").Include(
+                "~/Scripts/Admin/CompanyEdit.js"));
+
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/Site.css",

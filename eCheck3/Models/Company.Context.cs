@@ -32,6 +32,7 @@ namespace eCheck3.Models
         public virtual DbSet<tbSysReference_PwdExpiry> tbSysReference_PwdExpiry { get; set; }
         public virtual DbSet<tbCompany_CompanyModule> tbCompany_CompanyModule { get; set; }
         public virtual DbSet<tbSysReference_Module> tbSysReference_Module { get; set; }
+        public virtual DbSet<tbCompany_CompanyEmail> tbCompany_CompanyEmail { get; set; }
     
         public virtual ObjectResult<Nullable<decimal>> spCompany_InsertCompanyReturnID(string companyName, Nullable<bool> allowSelfRegistration, Nullable<bool> allowTraining, Nullable<bool> allowLive, Nullable<bool> defaultLive, Nullable<int> minPwdLength, Nullable<int> pwdComplexityID, Nullable<int> pwdExpiryID)
         {
@@ -77,6 +78,36 @@ namespace eCheck3.Models
                 new ObjectParameter("CompanyID", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spCompany_ListCompanyModuleAccess_Result>("spCompany_ListCompanyModuleAccess", companyIDParameter);
+        }
+    
+        public virtual int spCompany_CompanyModule_Delete(Nullable<int> companyID, Nullable<int> moduleID)
+        {
+            var companyIDParameter = companyID.HasValue ?
+                new ObjectParameter("CompanyID", companyID) :
+                new ObjectParameter("CompanyID", typeof(int));
+    
+            var moduleIDParameter = moduleID.HasValue ?
+                new ObjectParameter("ModuleID", moduleID) :
+                new ObjectParameter("ModuleID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spCompany_CompanyModule_Delete", companyIDParameter, moduleIDParameter);
+        }
+    
+        public virtual int spCompany_CompanyModule_UpdateOrInsert(Nullable<int> companyID, Nullable<int> moduleID, Nullable<decimal> modulePrice)
+        {
+            var companyIDParameter = companyID.HasValue ?
+                new ObjectParameter("CompanyID", companyID) :
+                new ObjectParameter("CompanyID", typeof(int));
+    
+            var moduleIDParameter = moduleID.HasValue ?
+                new ObjectParameter("ModuleID", moduleID) :
+                new ObjectParameter("ModuleID", typeof(int));
+    
+            var modulePriceParameter = modulePrice.HasValue ?
+                new ObjectParameter("ModulePrice", modulePrice) :
+                new ObjectParameter("ModulePrice", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spCompany_CompanyModule_UpdateOrInsert", companyIDParameter, moduleIDParameter, modulePriceParameter);
         }
     }
 }

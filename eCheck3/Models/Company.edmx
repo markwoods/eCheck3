@@ -21,6 +21,14 @@
           <Property Name="PwdExpiryID" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="tbCompany_CompanyEmail">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CompanyID" Type="int" Nullable="false" />
+          <Property Name="EmailSuffix" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
         <EntityType Name="tbCompany_CompanyModule">
           <Key>
             <PropertyRef Name="ID" />
@@ -28,6 +36,7 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CompanyID" Type="int" Nullable="false" />
           <Property Name="ModuleID" Type="int" Nullable="false" />
+          <Property Name="ModulePrice" Type="decimal" Precision="18" Scale="2" Nullable="false" />
         </EntityType>
         <EntityType Name="tbSysReference_Module">
           <Key>
@@ -36,6 +45,7 @@
           <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="ModuleName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="ModuleDescription" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="ModulePriceQualifier" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="tbSysReference_PwdComplexity">
           <Key>
@@ -103,6 +113,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="spCompany_CompanyModule_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CompanyID" Type="int" Mode="In" />
+          <Parameter Name="ModuleID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spCompany_CompanyModule_UpdateOrInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CompanyID" Type="int" Mode="In" />
+          <Parameter Name="ModuleID" Type="int" Mode="In" />
+          <Parameter Name="ModulePrice" Type="decimal" Mode="In" />
+        </Function>
         <Function Name="spCompany_InsertCompanyReturnID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CompanyName" Type="nvarchar" Mode="In" />
           <Parameter Name="AllowSelfRegistration" Type="bit" Mode="In" />
@@ -118,6 +137,7 @@
         </Function>
         <EntityContainer Name="EMSDataLocalModelStoreContainer">
           <EntitySet Name="tbCompany_Company" EntityType="Self.tbCompany_Company" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbCompany_CompanyEmail" EntityType="Self.tbCompany_CompanyEmail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tbCompany_CompanyModule" EntityType="Self.tbCompany_CompanyModule" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tbSysReference_Module" EntityType="Self.tbSysReference_Module" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tbSysReference_PwdComplexity" EntityType="Self.tbSysReference_PwdComplexity" Schema="dbo" store:Type="Tables" />
@@ -184,9 +204,6 @@
             <Parameter Name="PwdComplexityID" Mode="In" Type="Int32" />
             <Parameter Name="PwdExpiryID" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="spCompany_ListCompanyModuleAccess" ReturnType="Collection(EMSDataLocalModel.spCompany_ListCompanyModuleAccess_Result)">
-          <Parameter Name="CompanyID" Mode="In" Type="Int32" />
-          </FunctionImport>
           <EntitySet Name="tbCompany_CompanyModule" EntityType="EMSDataLocalModel.tbCompany_CompanyModule" />
           <EntitySet Name="tbSysReference_Module" EntityType="EMSDataLocalModel.tbSysReference_Module" />
           <AssociationSet Name="FK_tbCompany_CompanyModule_tbCompany_Company" Association="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbCompany_Company">
@@ -197,6 +214,19 @@
             <End Role="tbSysReference_Module" EntitySet="tbSysReference_Module" />
             <End Role="tbCompany_CompanyModule" EntitySet="tbCompany_CompanyModule" />
           </AssociationSet>
+          <FunctionImport Name="spCompany_ListCompanyModuleAccess" ReturnType="Collection(EMSDataLocalModel.spCompany_ListCompanyModuleAccess_Result)">
+          <Parameter Name="CompanyID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spCompany_CompanyModule_Delete">
+            <Parameter Name="CompanyID" Mode="In" Type="Int32" />
+            <Parameter Name="ModuleID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spCompany_CompanyModule_UpdateOrInsert">
+            <Parameter Name="CompanyID" Mode="In" Type="Int32" />
+            <Parameter Name="ModuleID" Mode="In" Type="Int32" />
+            <Parameter Name="ModulePrice" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <EntitySet Name="tbCompany_CompanyEmail" EntityType="EMSDataLocalModel.tbCompany_CompanyEmail" />
         </EntityContainer>
         <EntityType Name="tbSysReference_PwdComplexity">
           <Key>
@@ -238,12 +268,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <ComplexType Name="spCompany_ListCompanyModuleAccess_Result">
-          <Property Type="Int32" Name="ID" Nullable="false" />
-          <Property Type="String" Name="ModuleName" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="ModuleDescription" Nullable="false" MaxLength="500" />
-          <Property Type="String" Name="HasAccess" Nullable="false" MaxLength="5" />
-        </ComplexType>
         <EntityType Name="tbCompany_CompanyModule">
           <Key>
             <PropertyRef Name="ID" />
@@ -253,6 +277,7 @@
           <Property Name="ModuleID" Type="Int32" Nullable="false" />
           <NavigationProperty Name="tbCompany_Company" Relationship="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbCompany_Company" FromRole="tbCompany_CompanyModule" ToRole="tbCompany_Company" />
           <NavigationProperty Name="tbSysReference_Module" Relationship="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbSysReference_Module" FromRole="tbCompany_CompanyModule" ToRole="tbSysReference_Module" />
+          <Property Name="ModulePrice" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="tbSysReference_Module">
           <Key>
@@ -262,6 +287,7 @@
           <Property Name="ModuleName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ModuleDescription" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="tbCompany_CompanyModule" Relationship="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbSysReference_Module" FromRole="tbSysReference_Module" ToRole="tbCompany_CompanyModule" />
+          <Property Name="ModulePriceQualifier" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_tbCompany_CompanyModule_tbCompany_Company">
           <End Type="EMSDataLocalModel.tbCompany_Company" Role="tbCompany_Company" Multiplicity="1">
@@ -291,6 +317,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="spCompany_ListCompanyModuleAccess_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ModuleName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="ModuleDescription" Nullable="false" MaxLength="500" />
+          <Property Type="String" Name="ModulePriceQualifier" Nullable="true" MaxLength="100" />
+          <Property Type="Boolean" Name="HasAccess" Nullable="false" />
+          <Property Type="Decimal" Name="ModulePrice" Nullable="true" Precision="18" Scale="2" />
+        </ComplexType>
+        <EntityType Name="tbCompany_CompanyEmail">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CompanyID" Type="Int32" Nullable="false" />
+          <Property Name="EmailSuffix" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -331,19 +373,10 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="spCompany_InsertCompanyReturnID" FunctionName="EMSDataLocalModel.Store.spCompany_InsertCompanyReturnID" />
-          <FunctionImportMapping FunctionImportName="spCompany_ListCompanyModuleAccess" FunctionName="EMSDataLocalModel.Store.spCompany_ListCompanyModuleAccess">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="EMSDataLocalModel.spCompany_ListCompanyModuleAccess_Result">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
-                <ScalarProperty Name="ModuleDescription" ColumnName="ModuleDescription" />
-                <ScalarProperty Name="HasAccess" ColumnName="HasAccess" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="tbCompany_CompanyModule">
             <EntityTypeMapping TypeName="EMSDataLocalModel.tbCompany_CompanyModule">
               <MappingFragment StoreEntitySet="tbCompany_CompanyModule">
+                <ScalarProperty Name="ModulePrice" ColumnName="ModulePrice" />
                 <ScalarProperty Name="ModuleID" ColumnName="ModuleID" />
                 <ScalarProperty Name="CompanyID" ColumnName="CompanyID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -353,8 +386,32 @@
           <EntitySetMapping Name="tbSysReference_Module">
             <EntityTypeMapping TypeName="EMSDataLocalModel.tbSysReference_Module">
               <MappingFragment StoreEntitySet="tbSysReference_Module">
+                <ScalarProperty Name="ModulePriceQualifier" ColumnName="ModulePriceQualifier" />
                 <ScalarProperty Name="ModuleDescription" ColumnName="ModuleDescription" />
                 <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="spCompany_ListCompanyModuleAccess" FunctionName="EMSDataLocalModel.Store.spCompany_ListCompanyModuleAccess">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="EMSDataLocalModel.spCompany_ListCompanyModuleAccess_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="ModuleDescription" ColumnName="ModuleDescription" />
+                <ScalarProperty Name="ModulePriceQualifier" ColumnName="ModulePriceQualifier" />
+                <ScalarProperty Name="HasAccess" ColumnName="HasAccess" />
+                <ScalarProperty Name="ModulePrice" ColumnName="ModulePrice" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="spCompany_CompanyModule_Delete" FunctionName="EMSDataLocalModel.Store.spCompany_CompanyModule_Delete" />
+          <FunctionImportMapping FunctionImportName="spCompany_CompanyModule_UpdateOrInsert" FunctionName="EMSDataLocalModel.Store.spCompany_CompanyModule_UpdateOrInsert" />
+          <EntitySetMapping Name="tbCompany_CompanyEmail">
+            <EntityTypeMapping TypeName="EMSDataLocalModel.tbCompany_CompanyEmail">
+              <MappingFragment StoreEntitySet="tbCompany_CompanyEmail">
+                <ScalarProperty Name="EmailSuffix" ColumnName="EmailSuffix" />
+                <ScalarProperty Name="CompanyID" ColumnName="CompanyID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

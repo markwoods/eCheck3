@@ -79,6 +79,7 @@ namespace WebRole1.Helpers
                 ViewBag.MenuLink_Development = "true";
             }
 
+
             // temporarily authorize anon for development
             //ViewBag.MenuLink_Development = "true";
 

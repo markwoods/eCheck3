@@ -15,6 +15,8 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.Threading.Tasks;
 using PagedList;
 using eCheck3.Helpers;
+using eCheck3.ViewModels;
+using System.Data.Entity.Core.Objects;
 
 namespace eCheck3.Controllers
 {
@@ -164,6 +166,14 @@ namespace eCheck3.Controllers
             {
                 return HttpNotFound();
             }
+            // Get Default Group Name
+            if (tbCompany_Company.DefaultGroupID.HasValue)
+            {
+                tbAccess_Group tbAccessGroup = dbAccess.tbAccess_Group.Find(tbCompany_Company.DefaultGroupID);
+                if (tbAccessGroup != null) {
+                    ViewBag.DefaultGroupName = tbAccessGroup.GroupName;
+                }
+            }
             return View(tbCompany_Company);
         }
 
@@ -222,7 +232,6 @@ namespace eCheck3.Controllers
                 tbCompany_Company.AllowSelfRegistration = ext_tbCompany_Company.AllowSelfRegistration;
                 tbCompany_Company.AllowTraining = ext_tbCompany_Company.AllowTraining;
                 tbCompany_Company.CompanyName = ext_tbCompany_Company.CompanyName;
-                //tbCompany_Company.DefaultGroupID = ext_tbCompany_Company.DefaultGroupID;
                 tbCompany_Company.DefaultLive = ext_tbCompany_Company.DefaultLive;
                 tbCompany_Company.IsActive = ext_tbCompany_Company.IsActive;
                 tbCompany_Company.MinPwdLength = ext_tbCompany_Company.MinPwdLength;
@@ -306,42 +315,68 @@ namespace eCheck3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            tbCompany_Company tbCompany_Company = dbCompany.tbCompany_Company.Find(id);
-            if (tbCompany_Company == null)
+
+            // build view model
+            CompanyDetailsVM vm = new CompanyDetailsVM();
+            vm.tbCompany_Company = dbCompany.tbCompany_Company.Find(id);
+            ObjectResult<spCompany_ListCompanyModuleAccess_Result> ModuleAccessResults = dbCompany.spCompany_ListCompanyModuleAccess(id);
+            vm.CompanyModuleAccess = ModuleAccessResults.ToList();
+
+            // Get company email list
+            var tbCompany_CompanyEmail = from s in dbCompany.tbCompany_CompanyEmail where s.CompanyID == id
+                                         select s;
+            vm.CompanyEmail = tbCompany_CompanyEmail.ToList();
+
+            // Verify company exists
+            if (vm.tbCompany_Company == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.PwdComplexityID = new SelectList(dbCompany.tbSysReference_PwdComplexity, "ID", "PwdComplexityName", tbCompany_Company.PwdComplexityID);
-            ViewBag.PwdExpiryID = new SelectList(dbCompany.tbSysReference_PwdExpiry, "ID", "PwdExpiryName", tbCompany_Company.PwdExpiryID);
+
+            // build list information for drop down lists
+            ViewBag.PwdComplexityID = new SelectList(dbCompany.tbSysReference_PwdComplexity, "ID", "PwdComplexityName", vm.tbCompany_Company.PwdComplexityID);
+            ViewBag.PwdExpiryID = new SelectList(dbCompany.tbSysReference_PwdExpiry, "ID", "PwdExpiryName", vm.tbCompany_Company.PwdExpiryID);
             // Get list of active groups by company
-            var DefaultGroupID = from s in dbAccess.spAccess_Group_ListGroupsByCompanyID(id)
+            var DefaultGroupID = from s in dbAccess.spAccess_Group_ListGroupsByCompanyID(id) 
+                                 where s.IsActive == true
                                  select s;
-            DefaultGroupID = DefaultGroupID.Where(s => s.IsActive.Equals(true));
-            ViewBag.VBDefaultGroupID = new SelectList(DefaultGroupID, "ID", "GroupName", tbCompany_Company.DefaultGroupID);
-            
-            return View(tbCompany_Company);
+            ViewBag.VBDefaultGroupID = new SelectList(DefaultGroupID, "ID", "GroupName", vm.tbCompany_Company.DefaultGroupID);
+            return View(vm);
         }
         //
         // POST: Admin/CompanyEdit/5
         //
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CompanyEdit([Bind(Include = "ID,CompanyName,AllowSelfRegistration,DefaultGroupID,AllowTraining,AllowLive,DefaultLive,MinPwdLength,PwdComplexityID,PwdExpiryID,IsActive")] tbCompany_Company tbCompany_Company)
+        public ActionResult CompanyEdit(CompanyDetailsVM CompanyDetailsVM)
         {
             if (ModelState.IsValid)
             {
-                dbCompany.Entry(tbCompany_Company).State = EntityState.Modified;
+                dbCompany.Entry(CompanyDetailsVM.tbCompany_Company).State = EntityState.Modified;
+                //save changes to company information
                 dbCompany.SaveChanges();
+                // save any changes to module access
+                foreach (var item in CompanyDetailsVM.CompanyModuleAccess) { 
+                    if (item.HasAccess==true){
+                    // Access granted, add or update access and pricing in DB
+                        dbCompany.spCompany_CompanyModule_UpdateOrInsert(CompanyDetailsVM.tbCompany_Company.ID, item.ID, item.ModulePrice);
+                    }else{
+                    // Access denied, delete any access from db
+                        dbCompany.spCompany_CompanyModule_Delete(CompanyDetailsVM.tbCompany_Company.ID, item.ID);
+                    }
+                }
                 return RedirectToAction("Company");
             }
-            ViewBag.PwdComplexityID = new SelectList(dbCompany.tbSysReference_PwdComplexity, "ID", "PwdComplexityName", tbCompany_Company.PwdComplexityID);
-            ViewBag.PwdExpiryID = new SelectList(dbCompany.tbSysReference_PwdExpiry, "ID", "PwdExpiryName", tbCompany_Company.PwdExpiryID);
+
+            ViewBag.PwdComplexityID = new SelectList(dbCompany.tbSysReference_PwdComplexity, "ID", "PwdComplexityName", CompanyDetailsVM.tbCompany_Company.PwdComplexityID);
+            ViewBag.PwdExpiryID = new SelectList(dbCompany.tbSysReference_PwdExpiry, "ID", "PwdExpiryName", CompanyDetailsVM.tbCompany_Company.PwdExpiryID);
             // Get list of active groups by company
-            var DefaultGroupID = from s in dbAccess.spAccess_Group_ListGroupsByCompanyID(tbCompany_Company.ID)
+            var DefaultGroupID = from s in dbAccess.spAccess_Group_ListGroupsByCompanyID(CompanyDetailsVM.tbCompany_Company.ID)
+                                 where s.IsActive == true
                                  select s;
             DefaultGroupID = DefaultGroupID.Where(s => s.IsActive.Equals(true));
-            ViewBag.DefaultGroupID = new SelectList(DefaultGroupID, "ID", "GroupName", tbCompany_Company.DefaultGroupID);
-            return View(tbCompany_Company);
+            ViewBag.VBDefaultGroupID = new SelectList(DefaultGroupID, "ID", "GroupName", CompanyDetailsVM.tbCompany_Company.DefaultGroupID);
+            return View(CompanyDetailsVM);
         }
 
         //
@@ -376,15 +411,89 @@ namespace eCheck3.Controllers
         }
 
 
+
+
+
         //
         // GET: Admin/Group
         //
-        [Authorize(Roles = "canViewMyCompany, canEditMyCompany, canViewAllCompanies, canEditAllCompanies")]
-        public ActionResult Group()
+        [Authorize(Roles = "canViewGroupList, canAddGroups, canDeleteGroups, canEditGroups,canEditGroupMembership")]
+        public ActionResult Group(string sortOrder, string hfSortOrder, string currentFilter, string searchString, int? page, string pageSizeList)
         {
-            return View(dbAccess.tbAccess_Group.ToList());
-        }
 
+            // Build page size select list (Default = 10)
+            if (String.IsNullOrEmpty(pageSizeList))
+            {
+                pageSizeList = "10";
+            }
+            List<SelectListItem> items = ViewHelper.PageSizeList(pageSizeList);
+            ViewBag.PageSizeList = items;
+            ViewBag.PageSizeListValue = pageSizeList;
+
+            // Get actual user's company ID
+            ApplicationUser AppUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(HttpContext.User.Identity.GetUserId());
+            int intCompanyID = AppUser.CompanyID;
+
+            // Get list of groups from model
+            var tbAccess_Group = from s in dbAccess.tbAccess_Group where s.CompanyID == intCompanyID
+                                    select s;
+
+            // Handle search
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewBag.CurrentFilter = searchString;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                tbAccess_Group = tbAccess_Group.Where(s => s.GroupName.Contains(searchString));
+            }
+
+            // Handle sort item / order
+            if (string.IsNullOrEmpty(sortOrder)) { sortOrder = hfSortOrder; }
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.ActiveSortParm = sortOrder == "active" ? "active_desc" : "active";
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    tbAccess_Group = tbAccess_Group.OrderByDescending(s => s.GroupName);
+                    break;
+                case "active_desc":
+                    tbAccess_Group = tbAccess_Group.OrderByDescending(s => s.IsActive);
+                    break;
+                case "active":
+                    tbAccess_Group = tbAccess_Group.OrderBy(s => s.IsActive);
+                    break;
+                default:
+                    tbAccess_Group = tbAccess_Group.OrderBy(s => s.GroupName);
+                    break;
+            }
+
+            // Set PageSize
+            int pageSize = 10;
+            switch (pageSizeList)
+            {
+                case "10":
+                    pageSize = 10;
+                    break;
+                case "50":
+                    pageSize = 50;
+                    break;
+                default:
+                    pageSize = tbAccess_Group.Count();
+                    break;
+            }
+            // Set page number
+            int pageNumber = (page ?? 1);
+
+            // Return View
+            return View(tbAccess_Group.ToPagedList(pageNumber, pageSize));
+        }
 
 
 

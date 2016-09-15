@@ -36,5 +36,8 @@ namespace eCheck3.Models
         public virtual tbSysReference_PwdExpiry tbSysReference_PwdExpiry { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbCompany_CompanyModule> tbCompany_CompanyModule { get; set; }
+
+
+    
     }
 }

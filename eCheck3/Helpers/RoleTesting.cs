@@ -62,8 +62,8 @@ namespace eCheck3.Helpers
 
 
             userManager.RemoveFromRole(user.Id, "canViewAllCompanies");
-            //userManager.RemoveFromRole(user.Id, "canEditAllCompanies");
-            //userManager.RemoveFromRole(user.Id, "canViewMyCompany");
+            userManager.RemoveFromRole(user.Id, "canEditAllCompanies");
+            userManager.RemoveFromRole(user.Id, "canViewMyCompany");
             //userManager.RemoveFromRole(user.Id, "canEditMyCompany");
             //userManager.RemoveFromRole(user.Id, "canDoDevelopmentTesting");
 

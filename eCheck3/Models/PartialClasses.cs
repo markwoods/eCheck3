@@ -25,4 +25,9 @@ namespace eCheck3.Models
     public partial class tbSysReference_PwdExpiry
     {
     }
+
+    [MetadataType(typeof(spCompany_ListCompanyModuleAccessMetaData))]
+    public partial class spCompany_ListCompanyModuleAccess_Result
+    {
+    }
 }

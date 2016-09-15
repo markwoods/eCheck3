@@ -14,6 +14,7 @@
         <EntityTypeShape EntityType="EMSDataLocalModel.tbSysReference_Module" Width="1.5" PointX="2.125" PointY="7" />
         <AssociationConnector Association="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbCompany_Company" />
         <AssociationConnector Association="EMSDataLocalModel.FK_tbCompany_CompanyModule_tbSysReference_Module" />
+        <EntityTypeShape EntityType="EMSDataLocalModel.tbCompany_CompanyEmail" Width="1.5" PointX="5.375" PointY="0.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

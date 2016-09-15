@@ -26,3 +26,30 @@ function brandHover(isHovering){
         $(".brandEMS").css("color", "#143D8D");
     }
 }
+function isValidEmailAddress(emailAddress) {
+    //
+    // Evaluates sent string against pattern for compliance with standard email formats
+    //
+
+    var pattern = new RegExp(/^[+a-zA-Z0-9.'\_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i);
+    return pattern.test(emailAddress);
+};
+
+var tools = {
+    getStringBuilder: function () {
+        var data = [];
+        var counter = 0;
+        return {
+            // adds string s to the stringbuilder
+            append: function (s) { data[counter++] = s; return this; },
+            // removes j elements starting at i, or 1 if j is omitted
+            remove: function (i, j) { data.splice(i, j || 1); return this; },
+            // inserts string s at i
+            insert: function (i, s) { data.splice(i, 0, s); return this; },
+            // builds the string
+            toString: function (s) { return data.join(s || ""); return this; },
+            // clears the string
+            clear: function () { data.length = 0; return this; }
+        };
+    }
+};

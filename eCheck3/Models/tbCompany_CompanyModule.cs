@@ -17,6 +17,7 @@ namespace eCheck3.Models
         public int ID { get; set; }
         public int CompanyID { get; set; }
         public int ModuleID { get; set; }
+        public decimal ModulePrice { get; set; }
     
         public virtual tbCompany_Company tbCompany_Company { get; set; }
         public virtual tbSysReference_Module tbSysReference_Module { get; set; }

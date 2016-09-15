@@ -31,7 +31,7 @@ namespace eCheck3.Models
         [Display(Name = "New Administrator User Name")]
         public string NewAdministratorName;
         [Required]
-        [MinLength(6, ErrorMessage="Minimum password length is 6 characters.")]
+        [MinLength(6, ErrorMessage = "Minimum password length is 6 characters.")]
         [Display(Name = "New Administrator Temporary Password")]
         public string NewAdministratorPassword;
         [Required]
@@ -78,5 +78,11 @@ namespace eCheck3.Models
         public int ID;
         [Display(Name = "Password Expiry")]
         public string PwdExpiryName;
+    }
+
+    public class spCompany_ListCompanyModuleAccessMetaData
+    {
+        [RegularExpression(@"\d*\.[0-9]{2}", ErrorMessage = "Price must be a valid price [$x.xx]")]
+        public decimal ModulePrice;
     }
 }

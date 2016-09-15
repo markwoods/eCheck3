@@ -1,4 +1,4 @@
-﻿@model eCheck3.Models.tbCompany_Company
+﻿@model eCheck3.ViewModels.CompanyDetailsVM
 
 @{
     ViewBag.Title = "Edit Company";
@@ -12,41 +12,41 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>@Html.DisplayFor(model => model.CompanyName)</h4>
+        <h4>@Html.DisplayFor(model => model.tbCompany_Company.CompanyName)</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.tbCompany_Company.ID)
 
         <div class="form-group">
-            @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-3" })
+            @Html.LabelFor(model => model.tbCompany_Company.CompanyName, htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-9">
-                @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.tbCompany_Company.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.tbCompany_Company.CompanyName, "", new { @class = "text-danger" })
             </div>
         </div>
     </div>
     <div class="form-inline">
         <div class="form-group row">
-            @Html.LabelFor(model => model.AllowTraining, htmlAttributes: new { @class = "control-label col-md-3" })
+            @Html.LabelFor(model => model.tbCompany_Company.AllowTraining, htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-1">
                 <div class="checkbox">
-                    @Html.EditorFor(model => model.AllowTraining)
-                    @Html.ValidationMessageFor(model => model.AllowTraining, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.tbCompany_Company.AllowTraining)
+                    @Html.ValidationMessageFor(model => model.tbCompany_Company.AllowTraining, "", new { @class = "text-danger" })
                 </div>
             </div>
-            @Html.LabelFor(model => model.AllowLive, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.tbCompany_Company.AllowLive, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-1">
                 <div class="checkbox">
-                    @Html.EditorFor(model => model.AllowLive)
-                    @Html.ValidationMessageFor(model => model.AllowLive, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.tbCompany_Company.AllowLive)
+                    @Html.ValidationMessageFor(model => model.tbCompany_Company.AllowLive, "", new { @class = "text-danger" })
                 </div>
             </div>
-            @Html.LabelFor(model => model.DefaultLive, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.tbCompany_Company.DefaultLive, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-2">
                 <div class="checkbox">
-                    @Html.EditorFor(model => model.DefaultLive)
+                    @Html.EditorFor(model => model.tbCompany_Company.DefaultLive)
                     <span class="glyphicon glyphicon-question-sign help-icon" title="Companies must be permitted in live mode, or training mode, or both.  Default mode sets which mode will apply to new users for this company.  This will set which mode they log on to, users can change this setting individually."></span>
-                    @Html.ValidationMessageFor(model => model.DefaultLive, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.tbCompany_Company.DefaultLive, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
@@ -54,78 +54,161 @@
 
     <div class="form-horizontal">
         <div class="form-group">
-            @Html.LabelFor(model => model.MinPwdLength, htmlAttributes: new { @class = "control-label col-md-3" })
+            @Html.LabelFor(model => model.tbCompany_Company.MinPwdLength, htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-1">
-                @Html.EditorFor(model => model.MinPwdLength, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MinPwdLength, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.tbCompany_Company.MinPwdLength, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.tbCompany_Company.MinPwdLength, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.PwdComplexityID, "Password Complexity", htmlAttributes: new { @class = "control-label col-md-3" })
+            @Html.LabelFor(model => model.tbCompany_Company.PwdComplexityID, "Password Complexity", htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-9">
                 @Html.DropDownList("PwdComplexityID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.PwdComplexityID, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.tbCompany_Company.PwdComplexityID, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.PwdExpiryID, "Password Expiry", htmlAttributes: new { @class = "control-label col-md-3" })
+            @Html.LabelFor(model => model.tbCompany_Company.PwdExpiryID, "Password Expiry", htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-9">
                 @Html.DropDownList("PwdExpiryID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.PwdExpiryID, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.tbCompany_Company.PwdExpiryID, "", new { @class = "text-danger" })
             </div>
         </div>
     </div>
     
     <div class="form-horizontal">
         <div class="form-group row">
-            @Html.LabelFor(model => model.AllowSelfRegistration, htmlAttributes: new { @class = "control-label col-md-3" })
+            @Html.LabelFor(model => model.tbCompany_Company.AllowSelfRegistration, htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-1">
                 <div class="checkbox">
-                    @Html.EditorFor(model => model.AllowSelfRegistration)
+                    @Html.EditorFor(model => model.tbCompany_Company.AllowSelfRegistration)
                     <span class="glyphicon glyphicon-question-sign help-icon" title="Allowing self registration will permit individuals to create their own accounts assuming they have a valid email in the domain(s) permitted for this company.  Self-registered users will be automatically assigned to the default group defined below."></span>
-                    @Html.ValidationMessageFor(model => model.AllowSelfRegistration, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.tbCompany_Company.AllowSelfRegistration, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
     </div>
 
     <div class="form-horizontal">
-        <div class="form-group">
-            @Html.LabelFor(model => model.DefaultGroupID, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="form-group div-self-registration">
+            @Html.LabelFor(model => model.tbCompany_Company.DefaultGroupID, htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-3">
-                @Html.DropDownListFor(model => model.DefaultGroupID, ViewBag.VBDefaultGroupID as IEnumerable<SelectListItem>, htmlAttributes: new { @class = "form-control" }) 
-                @Html.ValidationMessageFor(model => model.DefaultGroupID, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(model => model.tbCompany_Company.DefaultGroupID, ViewBag.VBDefaultGroupID as IEnumerable<SelectListItem>, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.tbCompany_Company.DefaultGroupID, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-1">
                 <span class="glyphicon glyphicon-question-sign help-icon" title="Self-registered users will be automatically assigned to this default group, and be granted any priviledges this group has."></span>
             </div>
         </div>
 
+        <div id="fgSelfRegistrationEmail" class="form-group div-self-registration">
+            <div class="col-md-4">
+                <center>
+                Self Registration eMail<br />
+                <div id="divAddSelfRegistrationEmail" class="input-group input-group-sm col-md-3" style="vertical-align:middle;">
+                    <span class="input-group-addon">xxx@@</span>
+                    <input class="input-sm" type="text" placeholder="myCompany.com" id="tbAddSelfRegistrationEmail" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" onclick="addToSelfRegistrationEmail(); return false;">Add</button>
+                    </span>
+                </div>
+                <br />
+                <span id="helpEmail" class="text-danger">
+                </span>
+                <select multiple size="6" style="min-width:180px;" id="selectSelfRegistrationAddresses">
+                    @foreach (var email in Model.CompanyEmail)
+                    {
+                        <option value="@email.EmailSuffix">@email.EmailSuffix</option>                        
+                    }
+    
+
+                </select>
+                <br />
+                <button class="btn btn-sm btn-danger" type="button" title="Remove Self-Registration Suffix" onclick="removeFromSelfRegistrationEmail(); return false;">Remove</button>
+                </center>
+            </div>    
+         </div>
+
+
+
+
         @if (user.IsInRole("canEditAllCompanies"))
         {
             <div class="form-group row">
-                @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-3" })
+                @Html.LabelFor(model => model.tbCompany_Company.IsActive, htmlAttributes: new { @class = "control-label col-md-3" })
                 <div class="col-md-1">
                     <div class="checkbox">
-                        @Html.EditorFor(model => model.IsActive)
+                        @Html.EditorFor(model => model.tbCompany_Company.IsActive)
                         <span class="glyphicon glyphicon-question-sign help-icon" title="Removing active status will prevent any users from this company from logging on, will block self-registration, but will preserve all company data."></span>
-                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.tbCompany_Company.IsActive, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>
         }
 
-        <div class="form-group">
-            <div class="col-md-offset-4 col-md-8">
-                <input type="submit" value="Save" class="btn btn-primary btn-sm" />
+
+        <h4>Subscriptions</h4>
+
+        <div class="form-group row">
+            <div class="col-md-10">
+                <table id="MainDataTable" class="table table-responsive table-hover table-striped" style="overflow:auto;">
+                    <thead>
+                        <tr>
+                            <th style="width:70px;">Access</th>
+                            <th style="width:90px;">Module</th>
+                            <th style="width:400px;">Description</th>
+                            <th colspan="2" style="width:300px;" class="PriceEditors">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{var count = 0;}
+ 
+                       @foreach (var item in Model.CompanyModuleAccess)
+                        {
+                            <tr>
+                                <td class="ModuleEditors">
+                                @Html.EditorFor(modelItem => Model.CompanyModuleAccess[count].HasAccess)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => Model.CompanyModuleAccess[count].ModuleName)
+                                    @Html.HiddenFor(modelItem => Model.CompanyModuleAccess[count].ModuleName)
+                                    @Html.HiddenFor(modelItem => Model.CompanyModuleAccess[count].ID)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => Model.CompanyModuleAccess[count].ModuleDescription)
+                                    @Html.HiddenFor(modelItem => Model.CompanyModuleAccess[count].ModuleDescription)
+                                </td>
+                                <td class="ModuleEditors PriceEditors">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-addon">$</span>
+                                        @Html.EditorFor(modelItem => Model.CompanyModuleAccess[count].ModulePrice)
+                                    </div>
+                                    @Html.ValidationMessageFor(modelItem => Model.CompanyModuleAccess[count].ModulePrice, "", new { @class = "text-danger" })
+                                </td>
+                                <td class="PriceEditors">
+                                    @Html.DisplayFor(modelItem => Model.CompanyModuleAccess[count].ModulePriceQualifier)
+                                    @Html.HiddenFor(modelItem => Model.CompanyModuleAccess[count].ModulePriceQualifier)
+                                </td>
+                            </tr>
+                            count++;
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-}
 
-<div>
-    @{
+
+                <div class="form-group">
+                    <div class="col-md-offset-4 col-md-8">
+                        <input type="submit" value="Save" class="btn btn-primary btn-sm" />
+                    </div>
+                </div>
+            </div>
+            }
+
+            <div>
+                @{
         if (user.IsInRole("canViewAllCompanies") || user.IsInRole("canEditAllCompanies"))
         {
             @Html.ActionLink("Back to List", "Company")
@@ -136,43 +219,25 @@
         }
         if (user.IsInRole("canViewMyCompany") || user.IsInRole("canViewAllCompanies"))
         {
-            @Html.ActionLink("Details", "CompanyDetails", new { id = Model.ID })
+            @Html.ActionLink("Details", "CompanyDetails", new { id = Model.tbCompany_Company.ID })
         }
 
+                }
+            </div>
+
+@{
+    if (user.IsInRole("canEditAllCompanies") != true)
+        {
+            <script type="text/javascript" language="javascript">
+                $(".ModuleEditors :input").attr("disabled", true);
+             </script>
+        }
+    if (user.IsInRole("canEditAllCompanies") != true && user.IsInRole("canViewAllCompanies") != true)
+    {
+        <script type="text/javascript" language="javascript">
+            $(".PriceEditors").hide();
+        </script>
+    }
 }
-</div>
 
-<script type="text/javascript" language="javascript">
-    $(document).ready(function () {
-        $('#AllowLive').on("change", function () {
-            // If allowlive is unchecked, then allow training must be checked,
-            // and default live must not be checked
-            if ($(this).is(":checked") == false) {
-                $('#AllowTraining').prop("checked", true);
-                $('#DefaultLive').prop("checked", false);
-                $('#DefaultLive').prop("disabled",true);
-            }
-            else {
-                if($("#AllowTraining").is(":checked")==true){
-                    // both checked, enable live vs training default selector
-                    $('#DefaultLive').prop("disabled", false);
-                }
-            }
-        });
-
-        $('#AllowTraining').on("change", function () {
-            if ($(this).is(":checked") == false) {
-                $('#AllowLive').prop("checked", true);
-                $('#DefaultLive').prop("checked", true);
-                $('#DefaultLive').prop("disabled", true);
-            }
-            else
-            {
-                if($("#AllowLive").is(":checked")==true){
-                    // both checked, enable live vs training default selector
-                    $('#DefaultLive').prop("disabled", false);
-                }
-            }
-        });
-    });
-</script>
+@Scripts.Render("~/bundles/admin/companyedit")

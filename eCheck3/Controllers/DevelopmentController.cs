@@ -51,8 +51,8 @@ namespace eCheck3.Controllers
                 new SelectListItem(){ Value = "../Home/About", Text = "About"},
                 new SelectListItem(){ Value = "../Home/Contact", Text = "Contact"},
                 new SelectListItem(){ Value = "../Admin/Company", Text = "Company"},
-                new SelectListItem(){ Value = "../Admin/CompanyEdit/1", Text = "CompanyEdit"},
-                new SelectListItem(){ Value = "../Admin/CompanyDetails/1", Text = "CompanyDetails"},
+                new SelectListItem(){ Value = "../Admin/CompanyEdit/37", Text = "CompanyEdit"},
+                new SelectListItem(){ Value = "../Admin/CompanyDetails/37", Text = "CompanyDetails"},
                 new SelectListItem(){ Value = "../Admin/Group", Text = "Group" },
             };
             return View(DVM);
@@ -91,8 +91,8 @@ namespace eCheck3.Controllers
 
 
         // GET: Development/(+)
-        //[AllowAnonymous]
-        [Authorize(Roles = "canDoDevelopmentTesting")]
+        [AllowAnonymous]
+        //[Authorize(Roles = "canDoDevelopmentTesting")]
         public ActionResult Index(String strPlusMinus)
         {
             string UserId = System.Web.HttpContext.Current.User.Identity.GetUserId();

@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,6 +54,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -235,6 +238,9 @@
     <Compile Include="Models\tbCompany_Company.cs">
       <DependentUpon>Company.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\tbCompany_CompanyEmail.cs">
+      <DependentUpon>Company.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\tbCompany_CompanyModule.cs">
       <DependentUpon>Company.tt</DependentUpon>
     </Compile>
@@ -248,7 +254,16 @@
       <DependentUpon>Company.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\Administration.svc.cs">
+      <DependentUpon>Administration.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Service\IAdministration.cs" />
+    <Compile Include="Service\IService1.cs" />
+    <Compile Include="Service\Service1.svc.cs">
+      <DependentUpon>Service1.svc</DependentUpon>
+    </Compile>
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\CompanyDetailsVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -262,7 +277,10 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\Buttons\add.png" />
+    <Content Include="Images\Buttons\people-sm.png" />
+    <Content Include="Images\Buttons\delete-red.png" />
     <Content Include="Images\Buttons\delete-sm.png" />
+    <Content Include="Images\Buttons\delete.png" />
     <Content Include="Images\Buttons\edit-sm.png" />
     <Content Include="Images\Buttons\editprop-sm.png" />
     <Content Include="Images\Social\facebook.png" />
@@ -273,6 +291,8 @@
     <Content Include="Images\Social\youtube.png" />
     <Content Include="NotesDevelopmentPlan.txt" />
     <Content Include="NotesRolesMaster.txt" />
+    <Content Include="Scripts\Admin\CompanyCreate.js" />
+    <Content Include="Scripts\Admin\CompanyEdit.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <EntityDeploy Include="Models\Company.edmx">
@@ -309,6 +329,7 @@
       <DependentUpon>Access.edmx</DependentUpon>
       <LastGenOutput>Access.cs</LastGenOutput>
     </Content>
+    <Content Include="ClassDiagram1.cd" />
     <None Include="Properties\PublishProfiles\eCheck3.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\colResizable-1.5.min.js" />
@@ -324,6 +345,8 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Service\Administration.svc" />
+    <Content Include="Service\Service1.svc" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

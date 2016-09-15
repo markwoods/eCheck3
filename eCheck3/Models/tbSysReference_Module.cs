@@ -23,6 +23,7 @@ namespace eCheck3.Models
         public int ID { get; set; }
         public string ModuleName { get; set; }
         public string ModuleDescription { get; set; }
+        public string ModulePriceQualifier { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbCompany_CompanyModule> tbCompany_CompanyModule { get; set; }

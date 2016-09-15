@@ -144,7 +144,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="EMSDataAccessEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="tbAccess_Group" EntityType="Self.tbAccess_Group" />
           <EntitySet Name="tbAccess_GroupMembership" EntityType="Self.tbAccess_GroupMembership" />
           <EntitySet Name="tbAccess_GroupRole" EntityType="Self.tbAccess_GroupRole" />
@@ -177,7 +177,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="EMSDataLocalModel1StoreContainer" CdmEntityContainer="Entities">
+        <EntityContainerMapping StorageEntityContainer="EMSDataLocalModel1StoreContainer" CdmEntityContainer="EMSDataAccessEntities">
           <EntitySetMapping Name="tbAccess_Group">
             <EntityTypeMapping TypeName="EMSDataLocalModel1.tbAccess_Group">
               <MappingFragment StoreEntitySet="tbAccess_Group">

@@ -41,3 +41,8 @@ hr {
     cursor:help;
 
 }
+
+table thead th {
+    color:#428bca;
+}
+

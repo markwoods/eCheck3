@@ -51,21 +51,9 @@ var user = System.Web.HttpContext.Current.User;
                     <th>
                         @Html.ActionLink(@Html.DisplayNameFor(model => model.FirstOrDefault().CompanyName).ToHtmlString(), "Company", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter, pageSizeList = ViewBag.PageSizeListvalue })
                     </th>
-                    @*<th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().AllowLive)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().AllowTraining)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().DefaultLive)
-                    </th>*@
                     <th>
                         @Html.ActionLink(@Html.DisplayNameFor(model => model.FirstOrDefault().IsActive).ToHtmlString(), "Company", new { sortOrder = ViewBag.ActiveSortParm, currentFilter = ViewBag.CurrentFilter, pageSizeList = ViewBag.PageSizeListvalue })
                     </th>
-                    @*<th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().tbSysReference_PwdComplexity.PwdComplexityName)
-                    </th>*@
                     <th></th>
                 </tr>
 
@@ -75,21 +63,9 @@ var user = System.Web.HttpContext.Current.User;
                         <td>
                             @Html.DisplayFor(modelItem => item.CompanyName)
                         </td>
-                        @*<td>
-                            @Html.DisplayFor(modelItem => item.AllowLive)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AllowTraining)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DefaultLive)
-                        </td>*@
                         <td>
                             @Html.DisplayFor(modelItem => item.IsActive)
                         </td>
-                        @*<td>
-                            @Html.DisplayFor(modelItem => item.tbSysReference_PwdComplexity.PwdComplexityName)
-                        </td>*@
                         <td>
                             @if (user.IsInRole("canViewAllCompanies"))
                 {

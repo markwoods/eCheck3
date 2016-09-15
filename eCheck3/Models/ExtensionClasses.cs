@@ -11,10 +11,18 @@ namespace eCheck3.Models
 
         public virtual string NewAdministratorName { get; set; }
         public virtual string NewAdministratorEMail { get; set; }
-        public virtual string NewAdministratorPassword { get; set; }
-    
-    
+        public virtual string NewAdministratorPassword { get; set; }    
     }
+
+    //public class ext_CompanyModuleAccess {
+
+    //    public virtual Int32 ID { get; set; }
+    //    public virtual bool HasAccess { get; set; }
+    //    public virtual decimal ModulePrice { get; set; }
+    //    public virtual string ModuleName { get; set; }
+    //    public virtual string ModuleDescription { get; set; }
+    //    public virtual string ModulePriceQualifier { get; set; }
+    //}
 
     public static class GenericPrincipalExtensions
     {
