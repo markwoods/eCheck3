@@ -54,6 +54,10 @@ namespace eCheck3.Controllers
                 new SelectListItem(){ Value = "../Admin/CompanyEdit/37", Text = "CompanyEdit"},
                 new SelectListItem(){ Value = "../Admin/CompanyDetails/37", Text = "CompanyDetails"},
                 new SelectListItem(){ Value = "../Admin/Group", Text = "Group" },
+                new SelectListItem(){ Value = "../Admin/GroupCreate", Text = "Group Add" },
+                new SelectListItem(){ Value = "../Admin/GroupEdit/5", Text = "Group Edit" },
+                new SelectListItem(){ Value = "../Admin/GroupEditMembership/5", Text = "Group Membership" },
+                new SelectListItem(){ Value = "../Admin/GroupDelete/5", Text = "Group Delete" },
             };
             return View(DVM);
         }

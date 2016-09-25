@@ -33,6 +33,8 @@ namespace eCheck3
             bundles.Add(new ScriptBundle("~/bundles/admin/companyedit").Include(
                 "~/Scripts/Admin/CompanyEdit.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/admin/groupeditmembership").Include(
+                "~/Scripts/Admin/GroupEditMembership.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

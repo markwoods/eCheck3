@@ -1,57 +1,115 @@
-﻿@model IEnumerable<eCheck3.Models.tbAccess_Group>
+﻿@model PagedList.IPagedList<eCheck3.Models.tbAccess_Group>
+@using PagedList.Mvc;
+
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Groups";
 }
 
-<h2>Index</h2>
+@using (Html.BeginForm("Group", "Admin", FormMethod.Get, new { id = "dataForm" }))
+{
+    <h2>Groups</h2>
+    var user = System.Web.HttpContext.Current.User;
+    <div class="row">
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
+            @if (user.IsInRole("canAddGroups"))
+            {
+                <img src="~/Images/Buttons/add.png" onclick="window.location.href='GroupCreate'" alt="Create New" title="Create New Group" />
+            }
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.GroupName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.GroupDescription)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CompanyID)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DisplayOrder)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th></th>
-    </tr>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-10" style="vertical-align:top;">
+            @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "input input-sm", @placeholder = "Search for..." })
+            <button class="btn btn-primary btn-xs" type="submit" title="Search"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</button>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-3 col-xs-6">
+            @Html.PagedListPager(Model, page => Url.Action("Group",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+    new PagedListRenderOptions { ContainerDivClasses = new[] { "pagination-container pagination-sm" }, UlElementClasses = new[] { "pagination pagination-sm pagination-right" }, Display = PagedListDisplayMode.IfNeeded, MaximumPageNumbersToDisplay = 4 })
+            &nbsp;&nbsp;
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+            @Html.DropDownList("PageSizeList", ViewBag.PageSizeList as SelectList, new { @class = "input-sm" })
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12">
+            <button class="btn btn-xs btn-primary" onclick="return false;">
+                Count&nbsp;
+                <span class="badge">
+                    @Model.TotalItemCount
+                </span>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <table id="MainDataTable" class="table table-responsive table-hover table-striped" style="overflow:auto;">
+            <tr>
+                <th>
+                    @Html.ActionLink(@Html.DisplayNameFor(model => model.FirstOrDefault().GroupName).ToHtmlString(), "Group", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter, pageSizeList = ViewBag.PageSizeListvalue })
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().GroupDescription)
+                </th>
+                <th>
+                    @Html.ActionLink(@Html.DisplayNameFor(model => model.FirstOrDefault().DisplayOrder).ToHtmlString(), "Group", new { sortOrder = ViewBag.ActiveSortParm, currentFilter = ViewBag.CurrentFilter, pageSizeList = ViewBag.PageSizeListvalue })
+                </th>
+                <th>
+                    @Html.ActionLink(@Html.DisplayNameFor(model => model.FirstOrDefault().IsActive).ToHtmlString(), "Group", new { sortOrder = ViewBag.ActiveSortParm, currentFilter = ViewBag.CurrentFilter, pageSizeList = ViewBag.PageSizeListvalue })
+                </th>
+                <th></th>
+            </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.GroupName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GroupDescription)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CompanyID)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DisplayOrder)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GroupName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GroupDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DisplayOrder)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsActive)
+                    </td>
+                    <td>
+                        @if (user.IsInRole("canEditGroups"))
+                        {
+                            <img src="~/Images/Buttons/edit-sm.png" onclick="window.location.href='GroupEdit/@Html.DisplayFor(modelItem => item.ID)'" alt="Edit" title="Edit Group Details" />
+                        }
+                        @if (user.IsInRole("canEditGroupMembership"))
+                        {
+                            <img src="~/Images/Buttons/people-sm.png" onclick="window.location.href='GroupEditMembership/@Html.DisplayFor(modelItem => item.ID)'" alt="Edit Membership" title="Edit Group Membership" />
+                        }
+                        @if (user.IsInRole("canDeleteGroups"))
+                        {
+                            <img src="~/Images/Buttons/delete-sm.png" onclick="window.location.href='GroupDelete/@Html.DisplayFor(modelItem => item.ID)'" alt="Delete" title="Delete Group" />
+                        }
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+    <input type="hidden" id="hfSortOrder" name="hfSortOrder" value="@ViewBag.CurrentSort" />
 }
 
-</table>
+
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function () {
+        $('#MainDataTable').colResizable({resizeMode:"flex"});
+        $('#PageSizeList').on("change", function () {
+            $('#dataForm').submit();
+        });
+    });
+
+</script>
+
+    
+    
+    
+    

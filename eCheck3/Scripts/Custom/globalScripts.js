@@ -53,3 +53,13 @@ var tools = {
         };
     }
 };
+
+function buildCommaDelimitedStringFromSelectList(objSelectList) {
+    //
+    // Accept a Select List Object, and return a commaDelimited list of selected option values
+    //
+    var strOptionList = $.map($(objSelectList).find('option:selected'), function (o) {
+        return o.value;
+    }).join(',');
+    return strOptionList;
+}

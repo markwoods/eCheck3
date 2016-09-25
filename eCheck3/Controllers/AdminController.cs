@@ -40,7 +40,7 @@ namespace eCheck3.Controllers
             }
         }
             
-            //
+        //
         // GET: Admin
         //
         public ActionResult Index()
@@ -417,7 +417,7 @@ namespace eCheck3.Controllers
         //
         // GET: Admin/Group
         //
-        [Authorize(Roles = "canViewGroupList, canAddGroups, canDeleteGroups, canEditGroups,canEditGroupMembership")]
+        [Authorize(Roles = "canAddGroups, canDeleteGroups, canEditGroups,canEditGroupMembership")]
         public ActionResult Group(string sortOrder, string hfSortOrder, string currentFilter, string searchString, int? page, string pageSizeList)
         {
 
@@ -495,11 +495,197 @@ namespace eCheck3.Controllers
             return View(tbAccess_Group.ToPagedList(pageNumber, pageSize));
         }
 
+        //
+        // GET: Admin/GroupCreate
+        //
+        [Authorize(Roles = "canAddGroups")]
+        public ActionResult GroupCreate()
+        {
+            tbAccess_Group tbAccessGroup = new tbAccess_Group();
+            // Get logged on user's company ID
+            ApplicationUser AppUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(HttpContext.User.Identity.GetUserId());
+            tbAccessGroup.CompanyID = AppUser.CompanyID;
+            tbAccessGroup.DisplayOrder = 0;
+            tbAccessGroup.IsActive = true;
+            return View(tbAccessGroup);
+        }
+
+        //
+        // POST: Admin/GroupCreate
+        //
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult GroupCreate(tbAccess_Group tbAccessGroup)
+        {
+            if (ModelState.IsValid)
+            {
+                dbAccess.tbAccess_Group.Add(tbAccessGroup);
+                dbAccess.SaveChanges();
+                return RedirectToAction("Group");
+            }
+            return View(tbAccessGroup);
+        }
+        
+        //
+        // GET: Admin/GroupDelete/5
+        //
+        [Authorize(Roles = "canDeleteGroups")]
+        public ActionResult GroupDelete(int? id)
+        {
+            {
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                tbAccess_Group tbAccessGroup = dbAccess.tbAccess_Group.Find(id);
+                if (tbAccessGroup == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(tbAccessGroup);
+            }
+        }
+
+        //
+        // POST: Admin/GroupDelete/5
+        //
+        [HttpPost, ActionName("GroupDelete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult GroupDeleteConfirmed(int id)
+        {
+            tbAccess_Group tbAccessGroup = dbAccess.tbAccess_Group.Find(id);
+            dbAccess.tbAccess_Group.Remove(tbAccessGroup);
+            dbAccess.SaveChanges();
+            return RedirectToAction("Group");
+        }
+
+        //
+        // GET: Admin/GroupEdit/5
+        //
+        [Authorize(Roles = "canEditGroups")]
+        public ActionResult GroupEdit(int? id)
+        {
+            {
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+
+                // Get logged on user's company ID
+                ApplicationUser AppUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(HttpContext.User.Identity.GetUserId());
+                // build view model
+                GroupDetailsVM vm = new GroupDetailsVM();
+                vm.tbAccess_Group = dbAccess.tbAccess_Group.Find(id);
+                ObjectResult<spAccess_GroupRoleByCompanyModule_Result> GroupRolesByCompanyModule = dbAccess.spAccess_GroupRoleByCompanyModule(id, AppUser.CompanyID);
+                vm.GroupRoleCompanyModuleAccess = GroupRolesByCompanyModule.ToList();
+
+                if (vm.tbAccess_Group == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(vm);
+            }
+        }
+
+        //
+        // POST: Admin/GroupEdit/5
+        //
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult GroupEdit(GroupDetailsVM vm)
+        {
+            if (ModelState.IsValid)
+            {
+                // Save changes to Group details
+                dbAccess.Entry(vm.tbAccess_Group).State = EntityState.Modified;
+                dbAccess.SaveChanges();
+
+                // Look for changes to group roles, and save if changes made
+                // Get logged on user's company ID
+                int id = vm.tbAccess_Group.ID;
+                ApplicationUser AppUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(HttpContext.User.Identity.GetUserId());
+                // Get original role/access, prior to any edits for comparison
+                ObjectResult<spAccess_GroupRoleByCompanyModule_Result> originalGroupRolesByCompanyModule = dbAccess.spAccess_GroupRoleByCompanyModule(id, AppUser.CompanyID);
+                List<spAccess_GroupRoleByCompanyModule_Result> originalItem = originalGroupRolesByCompanyModule.ToList();
+                bool hasGroupRoleAccessChanged = false;
+
+               // Originals[0].
+                int ItemCount = 0;
+                foreach (var item in vm.GroupRoleCompanyModuleAccess) {
+                    if (originalItem[ItemCount].InRole != item.InRole) { 
+                    // Access is changed - save changes
+                        hasGroupRoleAccessChanged = true;
+                        if (item.InRole == false)
+                        {
+                            // Remove Group from Role
+                            var x = (from y in dbAccess.tbAccess_GroupRole
+                                         where y.GroupID == vm.tbAccess_Group.ID
+                                         && y.RoleID == item.RoleID
+                                         select y).FirstOrDefault();
+                            if (x != null)
+                            {
+                                dbAccess.tbAccess_GroupRole.Remove(x);
+                                dbAccess.SaveChanges();
+                            }
+                        }
+                        else { 
+                            // Add Group to Role
+                            tbAccess_GroupRole tbAccessGroupRole = new tbAccess_GroupRole();
+                            tbAccessGroupRole.GroupID = vm.tbAccess_Group.ID;
+                            tbAccessGroupRole.RoleID = item.RoleID;
+                            dbAccess.tbAccess_GroupRole.Add(tbAccessGroupRole);
+                            dbAccess.SaveChanges();                                
+                        }
+                    }
+                    ItemCount++;
+                }
+                if (hasGroupRoleAccessChanged)
+                {
+                    // Update all group members to role change
+                    AccessHelper AccessHelper = new AccessHelper();
+                    AccessHelper.UpdateRolesForAllMembersOfGroup(vm.tbAccess_Group.ID);
+                }
+                return RedirectToAction("Group");
+            }
+            return View(vm.tbAccess_Group);
+        }
+
+        //
+        // GET: Admin/GroupEditMembership/5
+        //
+        [Authorize(Roles = "canEditGroupMembership")]
+        public ActionResult GroupEditMembership(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            // Get and confirm group exists
+            tbAccess_Group tbAccessGroup = dbAccess.tbAccess_Group.Find(id);
+            if (tbAccessGroup == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Get logged on user's company ID
+            ApplicationUser AppUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(HttpContext.User.Identity.GetUserId());
+            // build view model
+            GroupMembershipVM vm = new GroupMembershipVM();
+            ObjectResult<spAccess_GroupMembershipByGroupID_Result> GroupMembershipResult = dbAccess.spAccess_GroupMembershipByGroupID(id);
+            vm.MemberList = GroupMembershipResult.ToList();
+            ObjectResult<spAccess_UserListByCompanyExclusiveOfGroup_Result> UserListResult = dbAccess.spAccess_UserListByCompanyExclusiveOfGroup(id, AppUser.CompanyID);
+            vm.UserList = UserListResult.ToList();
+            ViewBag.GroupID = id;
+            ViewBag.GroupName = tbAccessGroup.GroupName;
+            return View(vm);
+        }
 
 
-
-
-        protected override void Dispose(bool disposing)
+        //
+        // Class Disposing - get rid of everything
+        //
+        protected override void Dispose
+            (bool disposing)
         {
             if (disposing)
             {

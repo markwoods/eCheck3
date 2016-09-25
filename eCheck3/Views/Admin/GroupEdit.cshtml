@@ -1,0 +1,129 @@
+﻿@model eCheck3.ViewModels.GroupDetailsVM
+
+@{
+    ViewBag.Title = "Edit Group";
+    var user = System.Web.HttpContext.Current.User;
+}
+
+
+<h2>Edit Group</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@Html.DisplayFor(model => model.tbAccess_Group.GroupName)</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.tbAccess_Group.ID)
+        @Html.HiddenFor(model => model.tbAccess_Group.CompanyID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.tbAccess_Group.GroupName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.tbAccess_Group.GroupName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.tbAccess_Group.GroupName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.tbAccess_Group.GroupDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.tbAccess_Group.GroupDescription, new { @class = "form-control input-sm", @style = "width:280px;", @maxlength = "500" })
+                @Html.ValidationMessageFor(model => model.tbAccess_Group.GroupDescription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.tbAccess_Group.DisplayOrder, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-1">
+                @Html.EditorFor(model => model.tbAccess_Group.DisplayOrder, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.tbAccess_Group.DisplayOrder, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.tbAccess_Group.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.tbAccess_Group.IsActive)
+                    @Html.ValidationMessageFor(model => model.tbAccess_Group.IsActive, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <h4>Group Roles</h4>
+
+        <div class="form-group row">
+            <div class="col-md-12">
+                <table id="MainDataTable" class="table table-responsive table-hover table-striped" style="overflow:auto;">
+                    <thead>
+                        <tr>
+                            <th style="width:50px;">Access</th>
+                            <th style="width:140px;">Role Name</th>
+                            <th style="width:300px;">Role Description</th>
+                            <th style="width:80px;">Module</th>
+                            <th style="width:290px;">Module Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{var count = 0;}
+
+                        @foreach (var item in Model.GroupRoleCompanyModuleAccess)
+                        {
+                            <tr>
+                                <td class="ModuleEditors">
+                                    @Html.EditorFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].InRole)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].Name)
+                                    @Html.HiddenFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].Name)
+                                    @Html.HiddenFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].RoleID)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].RoleDescription)
+                                    @Html.HiddenFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].RoleDescription)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].ModuleName)
+                                    @Html.HiddenFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].ModuleName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].ModuleDescription)
+                                    @Html.HiddenFor(modelItem => Model.GroupRoleCompanyModuleAccess[count].ModuleDescription)
+                                </td>
+                            </tr>
+                            count++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary btn-sm" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Group")
+    @if (user.IsInRole("canEditGroupMembership"))
+    {
+        @Html.Raw(" | ")
+        @Html.ActionLink("Edit Membership", "GroupEditMembership", new { id = Model.tbAccess_Group.ID })
+    }          
+</div>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#MainDataTable').colResizable({ resizeMode: "flex" });
+    });
+
+
+</script>

@@ -2,15 +2,15 @@
 
 Next Steps - 
 		
-*** Upload to live, play around with testing, and with ipad		
 					
-	Roles - remove canViewGroupList, any of the other group functions will need to see the list
 
-	Group Pages
-		- Build add group page
-		- Build delete group page
-		- build edit group page (including roles)
-		- Build edit of group members	
+
+	iPad Functionality
+		- select lists not displaying properly
+		- company self-registration email input prepend and append not showing correctly
+		- company and group table not looking right, need to compact a little bit to display better
+		- need to test for mobile browser, and redirect to mobile portal
+
 
 	Users
 		- Build user list page
@@ -20,6 +20,8 @@ Next Steps -
 		- build group membership / role access page (? view role access and source in edit user page)
 		- build administer custom profile fields page
 		- update my profile page to include custom fields
+		- do some testing of adding / removing group membership, and group roles, and make sure members
+				maintain the roles / change roles appropriately.  Easier to do once user-roles are visible
 
 	Company
 		- Test that when module access is denied, any users or groups with role access within that module
@@ -27,9 +29,6 @@ Next Steps -
 
 
 	Overall
-* add group tables, CRUD manager, group roles
-* add user CRUD, users to groups, and group-user-role update
-* include view user roles by group
 
 
 *** Add version 3 improvement details to About page as built

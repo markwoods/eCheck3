@@ -1,0 +1,80 @@
+﻿@model IEnumerable<eCheck3.Models.tbCompany_Company>
+
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Company";
+}
+
+<h2>Companies</h2>
+@{
+    var user = System.Web.HttpContext.Current.User;
+}
+
+@if (user.IsInRole("canEditAllCompanies"))
+    { 
+    <p>
+        <img src="~/Images/Buttons/add.png" onclick="window.location.href='CompanyCreate'" alt="Create New" title="Create New Company" />
+    </p>
+    }
+<table id="MainDataTable" class="table table-hover table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AllowLive)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AllowTraining)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DefaultLive)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tbSysReference_PwdComplexity.PwdComplexityName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AllowLive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AllowTraining)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DefaultLive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.tbSysReference_PwdComplexity.PwdComplexityName)
+            </td>
+            <td>
+                @if (user.IsInRole("canViewAllCompanies"))
+                {
+                    <img src="~/Images/Buttons/editprop-sm.png" onclick="window.location.href='CompanyDetails/@Html.DisplayFor(modelItem => item.ID)'" alt="Details" title="View Company Details" />
+                }
+                @if (user.IsInRole("canEditAllCompanies"))
+                {
+                    <img src="~/Images/Buttons/edit-sm.png" onclick="window.location.href='CompanyEdit/@Html.DisplayFor(modelItem => item.ID)'" alt="Edit" title="Edit Company Details" />
+                    <img src="~/Images/Buttons/delete-sm.png" onclick="window.location.href='CompanyDelete/@Html.DisplayFor(modelItem => item.ID)'" alt="Delete" title="Delete Company" />
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+

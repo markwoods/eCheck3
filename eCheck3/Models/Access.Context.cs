@@ -52,5 +52,49 @@ namespace eCheck3.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spAccess_GroupRole_CopyRolesFromUser", groupIDParameter, userIDParameter);
         }
+    
+        public virtual ObjectResult<spAccess_GroupRoleByCompanyModule_Result> spAccess_GroupRoleByCompanyModule(Nullable<int> groupID, Nullable<int> companyID)
+        {
+            var groupIDParameter = groupID.HasValue ?
+                new ObjectParameter("GroupID", groupID) :
+                new ObjectParameter("GroupID", typeof(int));
+    
+            var companyIDParameter = companyID.HasValue ?
+                new ObjectParameter("CompanyID", companyID) :
+                new ObjectParameter("CompanyID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spAccess_GroupRoleByCompanyModule_Result>("spAccess_GroupRoleByCompanyModule", groupIDParameter, companyIDParameter);
+        }
+    
+        public virtual int spAccess_UpdateUserRoleByAllGroupRoles(string userID)
+        {
+            var userIDParameter = userID != null ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spAccess_UpdateUserRoleByAllGroupRoles", userIDParameter);
+        }
+    
+        public virtual ObjectResult<spAccess_GroupMembershipByGroupID_Result> spAccess_GroupMembershipByGroupID(Nullable<int> groupID)
+        {
+            var groupIDParameter = groupID.HasValue ?
+                new ObjectParameter("GroupID", groupID) :
+                new ObjectParameter("GroupID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spAccess_GroupMembershipByGroupID_Result>("spAccess_GroupMembershipByGroupID", groupIDParameter);
+        }
+    
+        public virtual ObjectResult<spAccess_UserListByCompanyExclusiveOfGroup_Result> spAccess_UserListByCompanyExclusiveOfGroup(Nullable<int> groupID, Nullable<int> companyID)
+        {
+            var groupIDParameter = groupID.HasValue ?
+                new ObjectParameter("GroupID", groupID) :
+                new ObjectParameter("GroupID", typeof(int));
+    
+            var companyIDParameter = companyID.HasValue ?
+                new ObjectParameter("CompanyID", companyID) :
+                new ObjectParameter("CompanyID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spAccess_UserListByCompanyExclusiveOfGroup_Result>("spAccess_UserListByCompanyExclusiveOfGroup", groupIDParameter, companyIDParameter);
+        }
     }
 }

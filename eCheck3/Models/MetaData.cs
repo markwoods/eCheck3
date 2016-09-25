@@ -85,4 +85,20 @@ namespace eCheck3.Models
         [RegularExpression(@"\d*\.[0-9]{2}", ErrorMessage = "Price must be a valid price [$x.xx]")]
         public decimal ModulePrice;
     }
+
+    public class tbAccess_GroupMetaData
+    {
+        public int ID;
+        [Required]
+        [Display(Name = "Group Name")]
+        public string GroupName;
+        [Required]
+        [Display(Name = "Group Description")]
+        public string GroupDescription;
+        public int CompanyID;
+        [Display(Name = "Display Order")]
+        public int DisplayOrder;
+        [Display(Name = "Active")]
+        public bool IsActive;
+    }
 }

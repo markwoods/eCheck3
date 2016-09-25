@@ -1,0 +1,73 @@
+﻿@model eCheck3.ViewModels.GroupMembershipVM
+
+@{
+    ViewBag.Title = "Edit Group Membership";
+    var user = System.Web.HttpContext.Current.User;
+}
+
+
+
+<h2>Group Membership</h2>
+<h4>@ViewBag.GroupName</h4>
+<input type="hidden" id="GroupID" value="@ViewBag.GroupID" />
+
+<div class="row">
+    <div class="col-md-10">
+        <table>
+            <thead>
+                <tr>
+                    <th><center>Members</center></th>
+                    <th></th>
+                    <th><center>All Users</center></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select multiple size="16" style="min-width:280px;" id="selectGroupMembers">
+                            @{
+                                int count = 0;
+                                foreach (var item in Model.MemberList)
+                                {
+                                    <option value="@Html.DisplayFor(modelItem => Model.MemberList[count].UserID)">@Html.DisplayFor(modelItem => Model.MemberList[count].FullName)</option>
+                                    count++;
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <center>
+                            <button class="btn btn-primary btn-sm" type="button" onclick="addUserToGroup(); return false;" title="Add selected user(s) to group">Add</button>
+                            <br /><br />
+                            <button class="btn btn-primary btn-sm" type="button" onclick="removeUserFromGroup(); return false;" title="Remove selected user(s) from group">Remove</button>
+                        </center>
+                    </td>
+                    <td>
+                        <select multiple size="16" style="min-width:280px;" id="selectAllUsers">
+                            @{
+                                count = 0;
+                                foreach (var item in Model.UserList)
+                                {
+                                    <option value="@Html.DisplayFor(modelItem => Model.UserList[count].Id)">@Html.DisplayFor(modelItem => Model.UserList[count].FullName)</option>
+                                    count++;
+                                }
+                            }
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div> 
+<br />
+<div class="row">
+    @Html.ActionLink("Back to List", "Group")
+    @if (user.IsInRole("canEditGroups"))
+    {
+        @Html.Raw(" | ")
+    @Html.ActionLink("Edit Group", "GroupEdit", new { id = ViewBag.GroupID })
+    }
+</div>
+
+@Scripts.Render("~/bundles/admin/groupeditmembership")
+

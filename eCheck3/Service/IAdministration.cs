@@ -22,5 +22,13 @@ namespace eCheck3.Service
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "Company/{strCompanyID}/SelfRegistration?strEmailSuffix={strEmailSuffix}")]
         void CompanySelfRegistrationPost(string strCompanyID, string strEmailSuffix);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "Group/{strGroupID}/Membership?strUserIDList={strUserIDList}")]
+        void GroupMembershipPost(string strGroupID, string strUserIDList);
+
+        [OperationContract]
+        [WebInvoke(Method = "DELETE", UriTemplate = "Group/{strGroupID}/Membership?strUserIDList={strUserIDList}")]
+        void GroupMembershipDelete(string strGroupID, string strUserIDList);
     }
 }

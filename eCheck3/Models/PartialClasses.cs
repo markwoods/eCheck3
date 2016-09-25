@@ -30,4 +30,9 @@ namespace eCheck3.Models
     public partial class spCompany_ListCompanyModuleAccess_Result
     {
     }
+
+    [MetadataType(typeof(tbAccess_GroupMetaData))]
+    public partial class tbAccess_Group
+    {
+    }
 }
