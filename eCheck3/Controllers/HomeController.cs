@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eCheck3.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -32,6 +33,7 @@ namespace eCheck3.Controllers
             return View();
         }
 
+        [RedirectMobileDevicesToMobileContactPageAttribute]
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";

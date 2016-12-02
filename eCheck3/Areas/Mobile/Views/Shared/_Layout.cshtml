@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - EMSData</title>
+    <title>@ViewBag.Title - EMS Data (Mobile)</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
 </head>
+
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -40,25 +40,26 @@
                         { @Html.ActionLink("Group", "Group", "Admin") }
                         if (ViewBag.MenuLink_Administration_Company == "true")
                         { @Html.ActionLink("Company", "Company", "Admin") }
-                        @Html.Raw("</li>")
-                        @Html.Raw("</ul>")
-                        @Html.Raw("</li>")
+                                                                        @Html.Raw("</li>")
+                                                                        @Html.Raw("</ul>")
+                                                                        @Html.Raw("</li>")
                     }
 
                     @*DEVELOPMENT SECTION*@
                     @if (ViewBag.MenuLink_Development == "true")
-                    { 
+                    {
                         @Html.Raw("<li class='dropdown'>")
                         @Html.Raw("<a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>Development</a>")
                         @Html.Raw("<ul class='dropdown-menu'>")
                         @Html.Raw("<li>")
-                        if (ViewBag.MenuLink_Local == "true") { @Html.ActionLink("Development Home", "DevelopmentHome", "Development")}                    
+                        if (ViewBag.MenuLink_Local == "true")
+                        { @Html.ActionLink("Development Home", "DevelopmentHome", "Development")}
                         if (ViewBag.MenuLink_Development_Testing == "true")
-                            {
+                        {
                             @Html.ActionLink("Development (+)", "", "Development", new { strPlusMinus = "Plus" }, null)
                             @Html.ActionLink("Development (-)", "", "Development", new { strPlusMinus = "Minus" }, null)
                             @Html.ActionLink("Database Testing", "Database", "Development")
-                            }
+                        }
                         @Html.Raw("</li>")
                         @Html.Raw("</ul>")
                         @Html.Raw("</li>")
@@ -70,6 +71,7 @@
             </div>
         </div>
     </div>
+
     <div class="container body-content">
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/bootstrap")
@@ -79,14 +81,14 @@
         <hr />
         <footer>
             <div class="col-xs-12 col-md-4">
-                <button class="btn btn-primary btn-xs" type="button" onclick="window.location.href='/Mobile/Home';" title="Mobile Version"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span> Mobile</button>
-                <button class="btn btn-primary btn-xs" type="button" onclick="window.location.href='/Home';" title="Home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</button>
-                <button class="btn btn-primary btn-xs" type="button" onclick="window.location.href='/Home/Contact';" title="Contact Critical Communication Solutions Inc."><span class="glyphicon glyphicon-envelope"></span> Contact</button>
+                <button class="btn btn-primary btn-xs" type="button" onclick="window.location.href='/Home';" title="Web Version"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Web</button>
+                <button class="btn btn-primary btn-xs" type="button" onclick="window.location.href='/Mobile/Home';" title="Home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</button>
+                <button class="btn btn-primary btn-xs" type="button" onclick="window.location.href='/Mobile/Home/Contact';" title="Contact Critical Communication Solutions Inc."><span class="glyphicon glyphicon-envelope"></span> Contact</button>
                 <div class="btn-group dropup">
                     <button class="btn btn-xs btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> Social <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="http://www.criticalcommunication.ca/blog" target="_blank"><img src="../Images/Social/feed.png" alt="Blog" /> Blog</a></li>
-                        <li><a href="http://www.facebook.com/CriticalComm" target="_blank"><img src="../Images/Social/facebook.png" alt="Facebook" /> Facebook</a></li>
+                        <li><a href="http://www.criticalcommunication.ca/blog" target="_blank"><img src="../../../../Images/Social/feed.png" alt="Blog" /> Blog</a></li>
+                        <li><a href="http://www.facebook.com/CriticalComm" target="_blank"><img src="../../Images/Social/facebook.png" alt="Facebook" /> Facebook</a></li>
                         <li><a href="http://www.twitter.com/markwoods911" target="_blank"><img src="../Images/Social/twitter.png" alt="Follow us on Twitter" /> Follow us</a></li>
                         <li><a href="http://twitter.com/share?url=emsdata.ca&hashtags=EMSData&text=I'm using emsdata.ca as my EMS Fleet Management resource.  Check it out! " target="_blank"><img src="../Images/Social/twitter.png" alt="Tweet#EMSData" /> Tweet #EMSData</a></li>
                         <li><a href="http://ca.linkedin.com/in/markwoodsCCSI" target="_blank"><img src="../Images/Social/linkedin.png" alt="LinkedIn" /> LinkedIn</a></li>
@@ -98,6 +100,6 @@
             <div class="col-xs-12 col-sm-6 col-md-5 text-muted text-right">&copy; @DateTime.Now.Year - Critical Communication Solutions Inc.</div>
         </footer>
     </div>
-
 </body>
+
 </html>

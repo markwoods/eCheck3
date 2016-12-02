@@ -1,0 +1,51 @@
+﻿@model eCheck3.Models.SMSVerificationViewModel
+
+@{
+    ViewBag.Title = "Verify";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("VerifyCodeForUsername", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("userId", @Model.userId)
+
+        <h4 id="h4title">Enter verification code to display username</h4>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group divCodeEntry">
+        @Html.LabelFor(m => m.code, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.code, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group" id="divUsername">
+        <div class="col-md-12">
+            <label class="control-label">Your username is </label>&nbsp;<label class="control-label" id="lblUserName">@Model.userName</label>
+        </div>
+    </div>
+
+    <div class="form-group divCodeEntry">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-primary" value="Submit" />
+        </div>
+    </div>
+}
+
+
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function () {
+        if ($("#lblUserName").text() != "") {
+            // Username found, hide code entry
+            $(".divCodeEntry").hide();
+            $("#h4title").text("Username");
+        }
+        else {
+            // No Username found, hide username
+            $("#divUsername").hide();
+        }
+    });
+
+</script>

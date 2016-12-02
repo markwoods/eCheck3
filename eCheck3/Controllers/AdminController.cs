@@ -25,21 +25,7 @@ namespace eCheck3.Controllers
         private EMSDataCompanyEntities dbCompany = new EMSDataCompanyEntities();
         private EMSDataAccessEntities dbAccess = new EMSDataAccessEntities();
 
-        private async Task<string> CreateUser(int CompanyID)
-        {
-            var user = new ApplicationUser { UserName = "NewAdmin", Email = "new@admin.com" };
-            user.CompanyID = CompanyID;
-            ApplicationUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            IdentityResult result = await userManager.CreateAsync(user, "NewPassword");
-            if (result.Succeeded == true)
-            {
-                return user.Id;
-            }
-            else {
-                return null;
-            }
-        }
-            
+    
         //
         // GET: Admin
         //
@@ -48,9 +34,29 @@ namespace eCheck3.Controllers
             return View(); // at this point no view exists
         }
 
+        #region Company
+        //
+        // 
+        //private async Task<string> CreateUser(int CompanyID)
+        //{
+        //    var user = new ApplicationUser { UserName = "NewAdmin", Email = "new@admin.com" };
+        //    user.CompanyID = CompanyID;
+        //    ApplicationUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        //    IdentityResult result = await userManager.CreateAsync(user, "NewPassword");
+        //    if (result.Succeeded == true)
+        //    {
+        //        return user.Id;
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+
         //
         // GET: Admin/Company
         //
+
         [Authorize(Roles="canViewMyCompany, canEditMyCompany, canViewAllCompanies, canEditAllCompanies")]
         public ActionResult Company(string sortOrder, string hfSortOrder, string currentFilter, string searchString, int? page, string pageSizeList)
         {
@@ -410,9 +416,9 @@ namespace eCheck3.Controllers
             return RedirectToAction("Company");
         }
 
+        #endregion
 
-
-
+        #region Group
 
         //
         // GET: Admin/Group
@@ -679,7 +685,7 @@ namespace eCheck3.Controllers
             ViewBag.GroupName = tbAccessGroup.GroupName;
             return View(vm);
         }
-
+        #endregion
 
         //
         // Class Disposing - get rid of everything

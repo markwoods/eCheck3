@@ -11,25 +11,71 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using eCheck3.Models;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Configuration;
+using Twilio;
+using System.Diagnostics;
 
 namespace eCheck3
 {
-    public class EmailService : IIdentityMessageService
+    public class EmailService : IIdentityMessageService        
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            await configSendGridasync(message);
         }
+
+        private async Task configSendGridasync(IdentityMessage message)
+        {
+            string apiKey = ConfigurationManager.AppSettings["SendGridAPI"];  
+            
+            dynamic sg = new SendGridAPIClient(apiKey);
+
+            Email from = new Email("NoReply@CriticalCommunication.ca");
+            Content content = new Content("text/html", message.Body);
+            Email to = new Email(message.Destination);
+            Mail mail = new Mail(from, message.Subject, to, content);
+            switch (message.Subject)
+            {
+                case "Please confirm your email address - Resend":
+                    mail.TemplateId = "e00c5c5a-4eda-42ad-b1ca-42f6a042d7c5";
+                    mail.Personalization[0].AddSubstitution("-ConfirmURL-", message.Body);
+                    break;
+                case "Please confirm your email address":
+                    mail.TemplateId = "e00c5c5a-4eda-42ad-b1ca-42f6a042d7c5";
+                    mail.Personalization[0].AddSubstitution("-ConfirmURL-", message.Body);
+                    break;
+                case "Reset Password":
+                    mail.TemplateId = "797f8782-66dc-4f66-bdaf-b4fe2512cc20";
+                    mail.Personalization[0].AddSubstitution("-ResetURL-", message.Body);
+                    break;
+                case "Forgot Username":
+                    mail.TemplateId = "55e6223e-bac2-4b08-b99c-cb7839dbc54d";
+                    break;
+
+            }
+
+            dynamic response = await sg.client.mail.send.post(requestBody: mail.Get());
+        }    
     }
 
     public class SmsService : IIdentityMessageService
     {
+
         public Task SendAsync(IdentityMessage message)
         {
-            // Plug in your SMS service here to send a text message.
-            return Task.FromResult(0);
-        }
+            // Twilio Begin
+            var Twilio = new TwilioRestClient("AC5415201f030cf1bd30b459351c77aaa6", "d6892658770506aa45f69b7f43ad2f48");
+
+            var result = Twilio.SendMessage("15876002911", message.Destination, message.Body);
+
+            // Status is one of Queued, Sending, Sent, Failed or null if the number is not valid
+             Trace.TraceInformation(result.Status);
+
+            // Twilio doesn't currently have an async API, so return success.
+             return Task.FromResult(0);
+            }
     }
 
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
@@ -65,16 +111,10 @@ namespace eCheck3
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
-            // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
-            // You can write your own provider and plug it in here.
+            // Register two factor authentication providers. 
             manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<ApplicationUser>
             {
-                MessageFormat = "Your security code is {0}"
-            });
-            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<ApplicationUser>
-            {
-                Subject = "Security Code",
-                BodyFormat = "Your security code is {0}"
+                MessageFormat = "Your EMSdata.ca security code is {0}"
             });
             manager.EmailService = new EmailService();
             manager.SmsService = new SmsService();
@@ -86,6 +126,20 @@ namespace eCheck3
             }
             return manager;
         }
+        
+
+        public async Task<ApplicationUser> FindByPhoneNumberAsync(string phoneNumber) {
+
+            if (phoneNumber == null)
+            {
+                throw new ArgumentNullException("phoneNumber");
+            }
+
+            ApplicationUser currentUser = await Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+            return(currentUser);
+
+        }
+
     }
 
     // Configure the application sign-in manager which is used in this application.

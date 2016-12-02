@@ -27,6 +27,7 @@ namespace eCheck3.Models
         }
     }
 
+
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()

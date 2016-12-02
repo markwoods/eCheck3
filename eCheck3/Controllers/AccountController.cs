@@ -17,6 +17,7 @@ namespace eCheck3.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private EMSDataCompanyEntities dbCompany = new EMSDataCompanyEntities();
 
         public AccountController()
         {
@@ -57,6 +58,12 @@ namespace eCheck3.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            if ((returnUrl != null) && returnUrl.StartsWith("/Mobile/",
+                                       StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectToAction("Login", "Account",
+                                        new { Area = "Mobile", ReturnUrl = returnUrl });
+            }
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -73,15 +80,29 @@ namespace eCheck3.Controllers
                 return View(model);
             }
 
+            // Require the user to have a confirmed email before they can log on.
+            var user = await UserManager.FindByNameAsync(model.UserName);
+            if (user != null)
+            {
+                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Please confirm your email address - Resend");
+                    ModelState.AddModelError("", "You must have a confirmed email to log on.");
+                    ModelState.AddModelError("", "The confirmation token has been resent to your email account.");
+                    return View(model);
+                }
+            }
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    var user = await UserManager.FindByEmailAsync(model.Email);
-                    var t = await UserManager.AddClaimAsync(user.Id, new Claim("FullName", user.FirstName + " " + user.LastName));
-                    return RedirectToLocal(returnUrl);
+                    //user = await UserManager.FindByEmailAsync(model.Email);
+                    // fullname claim is added in account register, and also if any name changes done in manage
+                    
+                    return RedirectToLocal(returnUrl);                     
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -141,6 +162,18 @@ namespace eCheck3.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+
+            // temp delete user aaa@criticalcommunication.ca
+            ApplicationUserManager usermanager = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            ApplicationUser user = usermanager.FindByEmail("aaa@criticalcommunication.ca");
+            if (user != null)
+            {
+                usermanager.Delete(user);
+            }
+            
+            
+            
+            
             return View();
         }
 
@@ -156,23 +189,34 @@ namespace eCheck3.Controllers
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 user.LastName = model.LastName;
                 user.FirstName = model.FirstName;
-                
+
+                // Get email suffix
+                string strEmailSuffix = model.Email.Substring(model.Email.IndexOf("@")+1);
+
+                // Try to find company ID from Company EMail                
+                var intCompanyID = (from s in dbCompany.tbCompany_CompanyEmail
+                                    where s.EmailSuffix == strEmailSuffix
+                                    select s.CompanyID).FirstOrDefault();
+
+                // If no company ID found, reject self-registration
+                if (intCompanyID == 0) {
+                    ModelState.AddModelError("Email", "Unapproved email for self-registration");
+                    return View(model);                
+                }
+
+                // Assign company ID to user
+                user.CompanyID = intCompanyID;
+                // Create User
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    var t = await UserManager.AddClaimAsync(user.Id, new Claim("FullName", user.FirstName + " " + user.LastName));
 
-                    // TODO - try to link email suffix with company auto-registration
-                    // TODO - email confirmation
-                    // TODO - setup 2 factor authentication
+                    // email confirmation
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Please confirm your email address");
 
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    return RedirectToAction("Index", "Home");
+                    // Redirect to email sent page
+                    return View("SendEmail");
                 }
                 AddErrors(result);
             }
@@ -192,6 +236,105 @@ namespace eCheck3.Controllers
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
+        }
+
+        //
+        // GET: /Account/ForgotUsername
+        [AllowAnonymous]
+        public ActionResult ForgotUsername()
+        {
+            ForgotUsernameViewModel model = new ForgotUsernameViewModel();
+            model.ValidationType = "email";
+            return View(model);
+        }
+
+        //
+        // POST: /Account/ForgotUsername
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ForgotUsername(ForgotUsernameViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // if send by phone, ensure phone is valid type, if by email, validate email type
+                switch (model.ValidationType)
+                {
+                    case "email":
+                        // Look for username by email
+                        if (model.Email == null)
+                        {
+                            // ensure an address was sent.  (if not null, the model will validate format)
+                            ModelState.AddModelError("Email", "No valid email address provided");
+                            return View(model);
+                        }
+                        var user = await UserManager.FindByEmailAsync(model.Email);
+                        if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                        {
+                            // Don't reveal that the user does not exist or is not confirmed
+                            return View("ForgotUsernameConfirmation");
+                        }
+                        // Send email with username to user using appropriate sendgrid template
+                        await UserManager.SendEmailAsync(user.Id, "Forgot Username", user.UserName);
+                        return RedirectToAction("ForgotUsernameConfirmation", "Account");
+
+                    case "phone":
+                        if (model.Phone == null)
+                        {
+                            ModelState.AddModelError("Phone", "No valid phone number provided");
+                            return View(model);
+                        }
+                        // Get Username from phone number
+                        ApplicationUser phoneUser = await UserManager.FindByPhoneNumberAsync(model.Phone);
+
+                        if (phoneUser == null)
+                        {
+                            ModelState.AddModelError("Phone", "No valid phone number provided");
+                            return View(model);
+                        }
+                    
+                        // Generate random 6-digit reset code
+                        string strResetCode = await UserManager.GenerateTwoFactorTokenAsync(phoneUser.Id, "Phone Code");
+                        // Send text to user
+                        await UserManager.SendSmsAsync(phoneUser.Id, "Your EMSdata.ca security code is " + strResetCode);
+
+                        // redirect to validation page
+                        SMSVerificationViewModel vm = new SMSVerificationViewModel();
+                        vm.userId = phoneUser.Id;
+                        return View("VerifyCodeForUsername", vm);
+
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        //
+        // GET: /Account/ForgotUsernameConfirmation
+        [AllowAnonymous]
+        public ActionResult ForgotUsernameConfirmation()
+        {
+            return View();
+        }
+
+        // POST: /Account/VerifyCodeForUsername
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> VerifyCodeForUsername(SMSVerificationViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (!await UserManager.VerifyTwoFactorTokenAsync(model.userId, "Phone Code", model.code))
+                {
+                    ModelState.AddModelError("code", "Invalid Code");
+                    return View(model);
+                }
+                model.userName = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(model.userId).UserName;
+                return View(model);
+            }
+            return View(model);
         }
 
         //
@@ -217,13 +360,11 @@ namespace eCheck3.Controllers
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
-
-                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", callbackUrl);
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -241,9 +382,31 @@ namespace eCheck3.Controllers
         //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
-        public ActionResult ResetPassword(string code)
+        public async Task<ActionResult> ResetPassword(string code, string userID)
         {
-            return code == null ? View("Error") : View();
+            if (code == null)
+            {
+                return View("Error");
+            }
+            // Get User and see if 2 factor is set up
+            var user = UserManager.FindById(userID);
+            // If two factor is enabled, send there for verification
+            if (user.TwoFactorEnabled){
+                ResetPasswordWithTwoFactorViewModel vm = new ResetPasswordWithTwoFactorViewModel();
+                vm.code = code;
+                vm.userID = userID;
+
+                vm.phone = user.PhoneNumber.Substring(user.PhoneNumber.Length-4);
+
+                // Generate random 6-digit reset code
+                string strResetCode = await UserManager.GenerateTwoFactorTokenAsync(userID, "Phone Code");
+                // Send text to user
+                await UserManager.SendSmsAsync(userID, "Your EMSdata.ca security code is " + strResetCode);
+
+                return View("ResetPasswordWithTwoFactor", vm);
+            }
+
+            return View();
         }
 
         //
@@ -281,16 +444,34 @@ namespace eCheck3.Controllers
         }
 
         //
-        // POST: /Account/ExternalLogin
+        //POST: /Account/ResetPasswordWithTwoFactor
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string returnUrl)
+        public async Task<ActionResult> ResetPasswordWithTwoFactor(ResetPasswordWithTwoFactorViewModel model)
         {
-            // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
-        }
 
+            if (ModelState.IsValid)
+            {
+                if (!await UserManager.VerifyTwoFactorTokenAsync(model.userID, "Phone Code", model.SMSCode))
+                {
+                    ModelState.AddModelError("SMScode", "Invalid Code");
+                    return View(model);
+                }
+                // Code Good, send to page for password reset
+                ResetPasswordViewModel vm = new ResetPasswordViewModel();
+                vm.Code = model.code;
+                var user = await UserManager.FindByIdAsync(model.userID);
+
+                vm.Email = user.Email;
+
+                return View("ResetPassword", vm);
+                //return View("ResetPasswordPostTwoFactor", model);
+            }
+            return View(model);
+
+        } 
+        
         //
         // GET: /Account/SendCode
         [AllowAnonymous]
@@ -327,74 +508,6 @@ namespace eCheck3.Controllers
         }
 
         //
-        // GET: /Account/ExternalLoginCallback
-        [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
-        {
-            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
-            if (loginInfo == null)
-            {
-                return RedirectToAction("Login");
-            }
-
-            // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-                case SignInStatus.Failure:
-                default:
-                    // If the user does not have an account, then prompt the user to create an account
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
-            }
-        }
-
-        //
-        // POST: /Account/ExternalLoginConfirmation
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Manage");
-            }
-
-            if (ModelState.IsValid)
-            {
-                // Get the information about the user from the external login provider
-                var info = await AuthenticationManager.GetExternalLoginInfoAsync();
-                if (info == null)
-                {
-                    return View("ExternalLoginFailure");
-                }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user);
-                if (result.Succeeded)
-                {
-                    result = await UserManager.AddLoginAsync(user.Id, info.Login);
-                    if (result.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToLocal(returnUrl);
-                    }
-                }
-                AddErrors(result);
-            }
-
-            ViewBag.ReturnUrl = returnUrl;
-            return View(model);
-        }
-
-        //
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -404,14 +517,14 @@ namespace eCheck3.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //
-        // GET: /Account/ExternalLoginFailure
-        [AllowAnonymous]
-        public ActionResult ExternalLoginFailure()
+        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
         {
-            return View();
+            string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userID, code = code }, protocol: Request.Url.Scheme);
+            await UserManager.SendEmailAsync(userID, subject, callbackUrl);
+            return callbackUrl;
         }
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -427,6 +540,7 @@ namespace eCheck3.Controllers
                     _signInManager.Dispose();
                     _signInManager = null;
                 }
+                dbCompany.Dispose();
             }
 
             base.Dispose(disposing);

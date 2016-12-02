@@ -1,0 +1,93 @@
+﻿@model eCheck3.Models.ForgotUsernameViewModel
+@{
+    ViewBag.Title = "Forgot your username?";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("ForgotUsername", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ValidationType, new { @class = "col-md-4 control-label" })
+                <div class="col-md-8">
+                    <select class="form-control" id="ValidationType" name="ValidationType">
+                        <option value="email">email</option>
+                        <option value="phone" @if(Model.ValidationType=="phone") {@Html.Raw("selected")} >phone</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group emailgroup">
+                @Html.LabelFor(m => m.Email, new { @class = "col-md-4 control-label" })
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group emailgroup">
+                <div class="col-md-offset-4 col-md-8">
+                    <input type="submit" class="btn btn-primary" value="Email Username" />
+                </div>
+            </div>
+            <div class="form-group phonegroup">
+                @Html.LabelFor(m => m.Phone, new { @class = "col-md-4 control-label" })
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group phonegroup">
+                <div class="col-md-offset-4 col-md-8">
+                    <input type="submit" class="btn btn-primary" value="Validate Phone" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="well well-lg">
+                <h4>Forgot Username</h4>
+                <p>
+                    You can select to receive your username by email, or if you've set up two-factor authentication, you can get your username on screen.
+                </p>
+                <ul>
+                    <li>Select 'Send username by email', enter the email associated with your account, and your username will be emailed to you shortly.</li>
+                    <li>If you've set up two-factor authentication, select 'Send username by phone', enter the 10-digit phone number associated with your account.  You'll be sent a text-message with
+                    a numeric code.  Enter the valid code on the next page, and your usename will be displayed.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function () {
+        $('#ValidationType').on("change", function () {
+            if ($(this).val() == 'email') {
+                $('.phonegroup').hide();
+                $('.emailgroup').show();
+            }
+            else {
+                $('.phonegroup').show();
+                $('.emailgroup').hide();
+            }
+        });
+
+        $('#ValidationType').trigger("change");
+
+    });
+
+</script>
+
+
+
+

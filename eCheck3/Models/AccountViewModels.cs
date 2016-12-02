@@ -33,7 +33,7 @@ namespace eCheck3.Models
         public string Code { get; set; }
         public string ReturnUrl { get; set; }
 
-        [Display(Name = "Remember this browser?")]
+        [Display(Name = "Remember me on this computer?")]
         public bool RememberBrowser { get; set; }
 
         public bool RememberMe { get; set; }
@@ -48,10 +48,10 @@ namespace eCheck3.Models
 
     public class LoginViewModel
     {
+        
         [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "User Name")]
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -118,5 +118,50 @@ namespace eCheck3.Models
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
+    }
+
+    public class ForgotUsernameViewModel
+    {
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+
+        [Phone]
+        [Display(Name = "Phone number")]
+        public string Phone { get; set; }
+
+        [Required]
+        [Display(Name = "Send Username by:")]
+        public string ValidationType { get; set; }
+    }
+
+    public class SMSVerificationViewModel
+    {
+        [Required]
+        public string userId { get; set; }
+
+        [Required]
+        [Display(Name = "Enter Code")]
+        public string code { get; set; }
+
+        public string userName { get; set; }
+    }
+
+    public class ResetPasswordWithTwoFactorViewModel
+    {
+        [Required]
+        public string userID { get; set; }
+
+        [Required]
+        [Display(Name = "Enter Code")]
+        public string SMSCode { get; set; }
+
+        [Required]
+        public string code { get; set; }
+
+        [Required]
+        [Display(Name = "Phone Number")]
+        public string phone { get; set; }
+        
     }
 }

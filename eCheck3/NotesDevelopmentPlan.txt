@@ -2,14 +2,74 @@
 
 Next Steps - 
 		
+	Account / Manage
+
+		- Registration (need to duplicate it on mobile site)
+		- Send email - good, need to duplicate on mobile
+		- Confirm email - good, need to duplicate on mobile		
+		- Forgot Username page
+			- enter email, verify and send username to email (Done) (need to duplicate on mobile)
+			- or
+			- enter phone, SMS verify, and display username on screen (Done) (need to duplicate on mobile)
+
+		- Manage Account Page
+			- Disable two-factor not working
+			- Add change username, email, last/first name, optional fields
+
+		- SendCode page
+			- only using phone, remove drop down, potentially remove entire page, just send code and wait for verification
+
+
+
+		
+
+
+
+		*** Look into updating claims, and cleaning up duplicate claims (fullname) 
+			(add claim in registration (done) and if names are changed in manage, do a claims delete, claims add)
+			
+
+
+		- Logon, manage, need to duplicate on mobile site
+		- Registration, logon, manage, need to clean up look of pages
+
+		
+		- Logon Page
+			*** Test and figure out where/why fullname isn't showing up in nav bar, and fix that'
+
+		- Development Controller/Development Home Page - if logon fails, display message back at development home
+
+
+		- Password reset
+			*** Using sendgrid templated email
+
+
+			Decisions: 
+				1. Forgot username, enter email, if found, email username to that address (low risk)
+				1a. Forgot username, if 2 factor set up, confirm phone with code, once code displayed, show username.
+				2. Forgot password, enter email.  if found, email link for password reset.  If 2 factor set up, link will
+				come to SMS confirmation page - enter phone number, then code 780-***-**01
+
+
+
 					
+		- Manage Account 
+			*** Profile details (need to re-establish full-name claim if name is changed)
+			*** Change Password
+			*** Change username, custom profiles
+
+		
+		Company Admin Custom Profile Details
 
 
 	iPad Functionality
+		*** Build mobile page view
+		*** Ensure logon works on mobile page
+		
+
 		- select lists not displaying properly
 		- company self-registration email input prepend and append not showing correctly
 		- company and group table not looking right, need to compact a little bit to display better
-		- need to test for mobile browser, and redirect to mobile portal
 
 
 	Users

@@ -10,6 +10,7 @@ using Microsoft.Owin.Security;
 using eCheck3.Models;
 using System.Threading.Tasks;
 using System.Security.Claims;
+using System.Configuration;
 
 
 
@@ -21,6 +22,25 @@ namespace eCheck3.Controllers
         //private ApplicationUserManager _userManager;
 
         DevelopmentViewModel DVM = new DevelopmentViewModel();
+
+        private List<SelectListItem> buildDVMChoiceList()
+        {
+            List<SelectListItem> DVMChoiceList = new List<SelectListItem>(){
+                new SelectListItem(){ Value = "../Home", Text = "Dashboard"},
+                new SelectListItem(){ Value = "../Home/About", Text = "About"},
+                new SelectListItem(){ Value = "../Home/Contact", Text = "Contact"},
+                new SelectListItem(){ Value = "../Admin/Company", Text = "Company"},
+                new SelectListItem(){ Value = "../Admin/CompanyEdit/37", Text = "CompanyEdit"},
+                new SelectListItem(){ Value = "../Admin/CompanyDetails/37", Text = "CompanyDetails"},
+                new SelectListItem(){ Value = "../Admin/Group", Text = "Group" },
+                new SelectListItem(){ Value = "../Admin/GroupCreate", Text = "Group Add" },
+                new SelectListItem(){ Value = "../Admin/GroupEdit/5", Text = "Group Edit" },
+                new SelectListItem(){ Value = "../Admin/GroupEditMembership/5", Text = "Group Membership" },
+                new SelectListItem(){ Value = "../Admin/GroupDelete/5", Text = "Group Delete" },
+                new SelectListItem(){ Value = "../Mobile", Text = "Mobile Home"}
+           };
+            return (DVMChoiceList);
+        }
 
         public ApplicationSignInManager SignInManager
         {
@@ -40,25 +60,22 @@ namespace eCheck3.Controllers
             //
             // Set up DD List of available page choices, select whatever the previous was
             //
+
+
+
+            string apiKey = ConfigurationManager.AppSettings["SendGridAPI"];
+                
+                
+                //Environment.GetEnvironmentVariable("SendGridAPI", EnvironmentVariableTarget.User);
+
+
+
             // Read Previous Choice from Cookie
             DVM.Choice = "";
             if (Request.Cookies["DevTargetPage"] != null) {
                 DVM.Choice = Request.Cookies["DevTargetPage"].Value.ToString();
             }
-            DVM.ChoiceList = new List<SelectListItem>()
-            {
-                new SelectListItem(){ Value = "../Home", Text = "Dashboard"},
-                new SelectListItem(){ Value = "../Home/About", Text = "About"},
-                new SelectListItem(){ Value = "../Home/Contact", Text = "Contact"},
-                new SelectListItem(){ Value = "../Admin/Company", Text = "Company"},
-                new SelectListItem(){ Value = "../Admin/CompanyEdit/37", Text = "CompanyEdit"},
-                new SelectListItem(){ Value = "../Admin/CompanyDetails/37", Text = "CompanyDetails"},
-                new SelectListItem(){ Value = "../Admin/Group", Text = "Group" },
-                new SelectListItem(){ Value = "../Admin/GroupCreate", Text = "Group Add" },
-                new SelectListItem(){ Value = "../Admin/GroupEdit/5", Text = "Group Edit" },
-                new SelectListItem(){ Value = "../Admin/GroupEditMembership/5", Text = "Group Membership" },
-                new SelectListItem(){ Value = "../Admin/GroupDelete/5", Text = "Group Delete" },
-            };
+            DVM.ChoiceList = buildDVMChoiceList();
             return View(DVM);
         }
 
@@ -88,7 +105,10 @@ namespace eCheck3.Controllers
                     // redirect to specified page
                     return RedirectToAction(Choice);
                 default:
-                    return View();
+                    ModelState.AddModelError("Choice", "Sign in failure");
+                    DVM.Choice = Choice;
+                    DVM.ChoiceList = buildDVMChoiceList();
+                    return View(DVM);
             }
         }
 

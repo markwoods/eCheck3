@@ -9,6 +9,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
 
     <div class="form-group">
         <div class="col-md-offset-1 col-md-2">
@@ -19,6 +20,12 @@
         </div>
     </div>
     <br /><br />
+
+    <p>
+        @Html.ActionLink("Forgot your username?", "ForgotUsername", "Account")
+    </p>
+
+
 }
 
 
